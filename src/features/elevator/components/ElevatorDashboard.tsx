@@ -297,51 +297,51 @@ export function ElevatorDashboard() {
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Add New Elevator</DialogTitle>
-                  <DialogDescription>Enter elevator details to add it to the system.</DialogDescription>
+                  <DialogTitle>{t('addElevator')}</DialogTitle>
+                  <DialogDescription>{t('addElevatorDesc')}</DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                   <div className="space-y-2">
-                    <Label>Elevator Name</Label>
-                    <Input value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="e.g. Elevator 5" />
+                    <Label>{t('elevatorName')}</Label>
+                    <Input value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder={t('elevatorNamePlaceholder')} />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Building</Label>
-                      <Input value={formData.building} onChange={e => setFormData({...formData, building: e.target.value})} placeholder="e.g. Tower C" />
+                      <Label>{t('building')}</Label>
+                      <Input value={formData.building} onChange={e => setFormData({...formData, building: e.target.value})} placeholder={t('buildingPlaceholder')} />
                     </div>
                     <div className="space-y-2">
-                      <Label>Floor Range</Label>
-                      <Input value={formData.floorRange} onChange={e => setFormData({...formData, floorRange: e.target.value})} placeholder="e.g. 1-40" />
+                      <Label>{t('floorRange')}</Label>
+                      <Input value={formData.floorRange} onChange={e => setFormData({...formData, floorRange: e.target.value})} placeholder={t('floorRangePlaceholder')} />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Maintenance Date</Label>
+                      <Label>{t('maintenanceDate')}</Label>
                       <Input type="date" value={formData.maintenanceDate} onChange={e => setFormData({...formData, maintenanceDate: e.target.value})} />
                     </div>
                     <div className="space-y-2">
-                      <Label>Status</Label>
+                      <Label>{t('status')}</Label>
                       <Select value={formData.status} onValueChange={v => setFormData({...formData, status: v as ElevatorStatus})}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="available">Available</SelectItem>
-                          <SelectItem value="maintenance">Maintenance</SelectItem>
-                          <SelectItem value="out_of_order">Out of Order</SelectItem>
+                          <SelectItem value="available">{t('available')}</SelectItem>
+                          <SelectItem value="maintenance">{t('maintenance')}</SelectItem>
+                          <SelectItem value="out_of_order">{t('outOfOrder')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label>Assign Operator</Label>
+                    <Label>{t('assignOperator')}</Label>
                     <Select value={formData.assignedUserId || "none"} onValueChange={v => setFormData({...formData, assignedUserId: v === "none" ? null : v})}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Unassigned" />
+                        <SelectValue placeholder={t('unassigned')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="none">Unassigned</SelectItem>
+                        <SelectItem value="none">{t('unassigned')}</SelectItem>
                         {operators.map(op => (
                           <SelectItem key={op.id} value={op.id}>{op.name}</SelectItem>
                         ))}
@@ -350,7 +350,7 @@ export function ElevatorDashboard() {
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button onClick={handleAddElevator}>Confirm Add</Button>
+                  <Button onClick={handleAddElevator}>{t('confirmAdd')}</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>

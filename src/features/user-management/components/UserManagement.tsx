@@ -195,7 +195,11 @@ export function UserManagement() {
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline" className="capitalize">
-                      {u.role === 'admin' ? t('admin') : u.role === 'operator' ? t('operator') : t('viewer')}
+                      {(() => {
+                        if (u.role === 'admin') return t('admin');
+                        if (u.role === 'operator') return t('operator');
+                        return t('viewer');
+                      })()}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -211,7 +215,7 @@ export function UserManagement() {
                       variant="ghost" 
                       size="icon" 
                       onClick={() => handleToggleStatus(u.id)}
-                      title={u.status === 'active' ? 'Disable User' : 'Enable User'}
+                      title={u.status === 'active' ? t('disableUser') : t('enableUser')}
                     >
                       <Trash2 className={`w-4 h-4 ${u.status === 'active' ? 'text-red-600' : 'text-green-600'}`} />
                     </Button>

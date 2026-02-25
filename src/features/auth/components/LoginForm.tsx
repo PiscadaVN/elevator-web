@@ -79,16 +79,16 @@ export function LoginForm() {
             <div className="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-100 italic">
               <p className="text-[10px] uppercase text-muted-foreground font-bold mb-2 tracking-wider text-center">{t('mockAccounts')}</p>
               <div className="grid grid-cols-3 gap-2 text-[10px] text-center">
-                <div className="p-1 border rounded bg-white">Admin: admin@piscada.com</div>
-                <div className="p-1 border rounded bg-white">Operator: 0987654321</div>
-                <div className="p-1 border rounded bg-white">Viewer: jane@piscada.com</div>
+                <div className="p-1 border rounded bg-white">{t('admin')}: admin@piscada.com</div>
+                <div className="p-1 border rounded bg-white">{t('operator')}: 0987654321</div>
+                <div className="p-1 border rounded bg-white">{t('viewer')}: jane@piscada.com</div>
               </div>
             </div>
           </CardContent>
         </form>
         <CardFooter className="flex flex-col">
           <p className="text-xs text-center text-muted-foreground mt-2">
-            © 2026 Piscada Elevator Management System
+            {t('copyright')}
           </p>
         </CardFooter>
       </Card>

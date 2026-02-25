@@ -45,11 +45,19 @@ export const translations: Translations = {
   elevatorOverview: { vi: "Tổng quan trạng thái thang máy", en: "Elevator Status Overview" },
   elevatorOverviewDesc: { vi: "Danh sách chi tiết tất cả các thang máy và trạng thái vận hành.", en: "Comprehensive list of units and their operational state." },
   addElevator: { vi: "Thêm thang máy", en: "Add Elevator" },
+  elevatorNamePlaceholder: { vi: "vd: Thang máy 5", en: "e.g. Elevator 5" },
+  buildingPlaceholder: { vi: "vd: Tòa nhà A", en: "e.g. Tower A" },
+  floorRangePlaceholder: { vi: "vd: 1-40", en: "e.g. 1-40" },
   building: { vi: "Tòa nhà", en: "Building" },
   floors: { vi: "Số tầng", en: "Floors" },
+  floorRange: { vi: "Khoảng tầng", en: "Floor Range" },
+  elevatorName: { vi: "Tên thang máy", en: "Elevator Name" },
+  addElevatorDesc: { vi: "Nhập thông tin thang máy để thêm vào hệ thống.", en: "Enter elevator details to add it to the system." },
   lastUpdated: { vi: "Cập nhật cuối", en: "Last Updated" },
   assignedTo: { vi: "Người phụ trách", en: "Assigned To" },
   unassigned: { vi: "Chưa phân công", en: "Unassigned" },
+  assignOperator: { vi: "Phân công nhân viên", en: "Assign Operator" },
+  confirmAdd: { vi: "Xác nhận thêm", en: "Confirm Add" },
 
   // Maintenance Status
   maintenanceDate: { vi: "Ngày bảo trì", en: "Maintenance Date" },
@@ -72,6 +80,9 @@ export const translations: Translations = {
   viewer: { vi: "Người xem", en: "Viewer" },
   active: { vi: "Hoạt động", en: "Active" },
   disabled: { vi: "Vô hiệu", en: "Disabled" },
+  disableUser: { vi: "Vô hiệu hóa người dùng", en: "Disable User" },
+  enableUser: { vi: "Kích hoạt người dùng", en: "Enable User" },
+  copyright: { vi: "© 2026 Hệ thống Quản lý Thang máy Piscada", en: "© 2026 Piscada Elevator Management System" },
 }
 
 interface LanguageContextType {
@@ -83,17 +94,17 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>("vi")
+  const [language, setLanguage] = useState<Language>("vi")
 
   useEffect(() => {
     const savedLang = localStorage.getItem("elevator_lang") as Language | null
     if (savedLang) {
-      setLanguageState(savedLang)
+      setLanguage(savedLang)
     }
   }, [])
 
-  const setLanguage = (lang: Language) => {
-    setLanguageState(lang)
+  const handleSetLanguage = (lang: Language) => {
+    setLanguage(lang)
     localStorage.setItem("elevator_lang", lang)
   }
 
@@ -101,7 +112,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     return translations[key]?.[language] || key
   }
 
-  const value = useMemo(() => ({ language, setLanguage, t }), [language])
+  const value = useMemo(() => ({ language, setLanguage: handleSetLanguage, t }), [language])
 
   return (
     <LanguageContext.Provider value={value}>
