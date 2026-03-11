@@ -6,7 +6,6 @@ import { useAuth } from '@/features/auth/hooks/useAuth'
 import { useCurrentUser } from '@/hooks/api/useUser'
 import { useLanguage } from '@/i18n/LanguageContext'
 import { getAuthToken } from '@/lib/api-client'
-import { isAdmin as checkIsAdmin } from '@/lib/role-utils'
 
 export const Route = createFileRoute('/_dashboard')({
 	beforeLoad: () => {
@@ -30,8 +29,6 @@ function RouteComponent() {
 
 	if (!user) return null
 
-	const isAdmin = checkIsAdmin(user.role)
-
 	const handleNavigate = (path: string) => {
 		navigate({ to: path })
 	}
@@ -44,14 +41,6 @@ function RouteComponent() {
 				</button>
 				<div className="flex items-center gap-4 flex-1 justify-center">
 					<Button
-						variant={currentTab === '/elevator' ? 'default' : 'ghost'}
-						size="sm"
-						onClick={() => handleNavigate('/elevator')}
-						className="rounded-full"
-					>
-						<LayoutDashboard className="w-4 h-4 mr-2" /> {t('monitoring')}
-					</Button>
-					<Button
 						variant={currentTab === '/incident' ? 'default' : 'ghost'}
 						size="sm"
 						onClick={() => handleNavigate('/incident')}
@@ -59,16 +48,22 @@ function RouteComponent() {
 					>
 						<AlertCircle className="w-4 h-4 mr-2" /> {t('incidents')}
 					</Button>
-					{isAdmin && (
-						<Button
-							variant={currentTab === '/user' ? 'default' : 'ghost'}
-							size="sm"
-							onClick={() => handleNavigate('/user')}
-							className="rounded-full"
-						>
-							<Users className="w-4 h-4 mr-2" /> {t('users')}
-						</Button>
-					)}
+					<Button
+						variant={currentTab === '/elevator' ? 'default' : 'ghost'}
+						size="sm"
+						onClick={() => handleNavigate('/elevator')}
+						className="rounded-full"
+					>
+						<LayoutDashboard className="w-4 h-4 mr-2" /> {t('elevator')}
+					</Button>
+					<Button
+						variant={currentTab === '/user' ? 'default' : 'ghost'}
+						size="sm"
+						onClick={() => handleNavigate('/user')}
+						className="rounded-full"
+					>
+						<Users className="w-4 h-4 mr-2" /> {t('users')}
+					</Button>
 					<Button
 						variant={currentTab === '/contract' ? 'default' : 'ghost'}
 						size="sm"

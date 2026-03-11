@@ -1,3 +1,6 @@
+import { useCallback, useEffect, useMemo, useState } from 'react'
+
+import { Button } from '@/components/ui/button'
 import {
 	Dialog,
 	DialogContent,
@@ -7,17 +10,15 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog'
-import type { Elevator, ElevatorStatus } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { MultiSelect } from '@/components/ui/multi-select'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useUpdateElevator } from '@/hooks/api'
+import { useUsers } from '@/hooks/api/useUser'
 import { useLanguage } from '@/i18n/LanguageContext'
-import { useCallback, useState } from 'react'
-import { useUpdateElevator, useUsers } from '@/hooks/api'
-import { Button } from '@/components/ui/button'
-import type { ElevatorUpdate } from '@/types/api'
-
-import { mapLocalStatusToApi } from '../helper/utils'
+import { UserRoles } from '@/lib/role-utils'
+import type { Elevator, ElevatorStatus, ElevatorUpdate } from '@/types/api'
 
 interface EditElevatorDialogProps {
 	isOpen: boolean
@@ -28,40 +29,59 @@ interface EditElevatorDialogProps {
 export function EditElevatorDialog({ isOpen, onClose, elevator }: EditElevatorDialogProps) {
 	const { t } = useLanguage()
 
-	const { data: operators } = useUsers()
 	const updateMutation = useUpdateElevator()
+	const { data: users = [] } = useUsers()
+
+	const operators = useMemo(() => users.filter((user) => user.role === UserRoles.OPERATOR && user.isActive), [users])
+	const operatorOptions = useMemo(
+		() =>
+			operators.map((operator) => ({
+				value: operator.id,
+				label: operator.fullName,
+			})),
+		[operators],
+	)
 
 	const [formData, setFormData] = useState<Partial<Elevator>>({
-		name: '',
-		building: '',
-		floorRange: '',
-		status: 'available',
-		maintenanceDate: new Date().toISOString().split('T')[0],
-		assignedUserId: null,
-		maintenanceCycle: '1m',
-		startDate: new Date().toISOString().split('T')[0],
+		code: '',
+		address: '',
+		minFloor: 0,
+		maxFloor: 0,
+		status: 'active',
+		operatorIds: [],
 	})
+
+	useEffect(() => {
+		setFormData({
+			code: elevator.code,
+			address: elevator.address ?? '',
+			minFloor: elevator.minFloor ?? 0,
+			maxFloor: elevator.maxFloor ?? 0,
+			status: elevator.status,
+			operatorIds: elevator.operatorIds ?? [],
+		})
+	}, [elevator])
 
 	const resetForm = useCallback(() => {
 		setFormData({
-			name: '',
-			building: '',
-			floorRange: '',
-			status: 'available',
-			maintenanceDate: new Date().toISOString().split('T')[0],
-			assignedUserId: null,
-			maintenanceCycle: '1m',
-			startDate: new Date().toISOString().split('T')[0],
+			code: '',
+			address: '',
+			minFloor: 0,
+			maxFloor: 0,
+			status: 'active',
+			operatorIds: [],
 		})
 	}, [])
 
 	const handleUpdateElevator = async () => {
 		try {
 			const updateData: ElevatorUpdate = {
-				status: formData.status ? mapLocalStatusToApi(formData.status as ElevatorStatus) : undefined,
-				maintenance_cycle_months: formData.maintenanceCycle
-					? Number.parseInt(formData.maintenanceCycle.replace('m', ''))
-					: undefined,
+				code: formData.code,
+				address: formData.address,
+				minFloor: formData.minFloor,
+				maxFloor: formData.maxFloor,
+				status: formData.status,
+				operatorIds: formData.operatorIds,
 			}
 
 			await updateMutation.mutateAsync({ elevatorId: elevator.id, data: updateData })
@@ -78,47 +98,40 @@ export function EditElevatorDialog({ isOpen, onClose, elevator }: EditElevatorDi
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>
-						{t('edit')}: {elevator.name}
+						{t('edit')}: {elevator.code}
 					</DialogTitle>
 					<DialogDescription>{t('elevatorOverviewDesc')}</DialogDescription>
 				</DialogHeader>
 				<div className="grid gap-4 py-4">
+					<div className="space-y-2">
+						<Label>{t('elevatorCode')}</Label>
+						<Input value={formData.code ?? ''} onChange={(e) => setFormData({ ...formData, code: e.target.value })} />
+					</div>
+
+					<div className="space-y-2">
+						<Label>{t('building')}</Label>
+						<Input
+							value={formData.address ?? ''}
+							onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+						/>
+					</div>
+
 					<div className="grid grid-cols-2 gap-4">
 						<div className="space-y-2">
-							<Label>{t('startDate')}</Label>
+							<Label>{t('minFloor')}</Label>
 							<Input
-								type="date"
-								value={formData.startDate}
-								onChange={(e) =>
-									setFormData({
-										...formData,
-										startDate: e.target.value,
-									})
-								}
+								type="number"
+								value={formData.minFloor ?? 0}
+								onChange={(e) => setFormData({ ...formData, minFloor: Number(e.target.value) })}
 							/>
 						</div>
 						<div className="space-y-2">
-							<Label>{t('maintenanceCycle')}</Label>
-							<Select
-								value={formData.maintenanceCycle}
-								onValueChange={(v) =>
-									setFormData({
-										...formData,
-										maintenanceCycle: v as Elevator['maintenanceCycle'],
-									})
-								}
-							>
-								<SelectTrigger>
-									<SelectValue />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value="1m">{t('months_1')}</SelectItem>
-									<SelectItem value="2m">{t('months_2')}</SelectItem>
-									<SelectItem value="3m">{t('months_3')}</SelectItem>
-									<SelectItem value="6m">{t('months_6')}</SelectItem>
-									<SelectItem value="12m">{t('months_12')}</SelectItem>
-								</SelectContent>
-							</Select>
+							<Label>{t('maxFloor')}</Label>
+							<Input
+								type="number"
+								value={formData.maxFloor ?? 0}
+								onChange={(e) => setFormData({ ...formData, maxFloor: Number(e.target.value) })}
+							/>
 						</div>
 					</div>
 					<div className="grid grid-cols-2 gap-4">
@@ -137,41 +150,27 @@ export function EditElevatorDialog({ isOpen, onClose, elevator }: EditElevatorDi
 									<SelectValue />
 								</SelectTrigger>
 								<SelectContent>
-									<SelectItem value="available">{t('available')}</SelectItem>
-									<SelectItem value="maintenance">{t('maintenance')}</SelectItem>
+									<SelectItem value="active">{t('normal')}</SelectItem>
 									<SelectItem value="out_of_order">{t('outOfOrder')}</SelectItem>
 								</SelectContent>
 							</Select>
 						</div>
 						<div className="space-y-2">
-							<Label>{t('assignedTo')}</Label>
-							<Select
-								value={formData.assignedUserId || 'none'}
-								onValueChange={(v) =>
-									setFormData({
-										...formData,
-										assignedUserId: v === 'none' ? null : v,
-									})
-								}
-							>
-								<SelectTrigger>
-									<SelectValue placeholder={t('unassigned')} />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value="none">{t('unassigned')}</SelectItem>
-									{operators?.map((op) => (
-										<SelectItem key={op.id} value={op.id}>
-											{op.full_name}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
+							<Label>{t('operators')}</Label>
+							<MultiSelect
+								value={formData.operatorIds ?? []}
+								onValueChange={(operatorIds) => setFormData((prev) => ({ ...prev, operatorIds }))}
+								options={operatorOptions}
+								placeholder={t('selectOperators')}
+								searchPlaceholder={t('searchOperators')}
+								emptyText={t('noUsersFound')}
+							/>
 						</div>
 					</div>
 				</div>
 				<DialogFooter>
 					<Button onClick={handleUpdateElevator} disabled={updateMutation.isPending}>
-						{updateMutation.isPending ? 'Saving...' : t('save')}
+						{updateMutation.isPending ? t('saving') : t('save')}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

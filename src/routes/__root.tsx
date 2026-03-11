@@ -1,5 +1,6 @@
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
-import type { User } from '@/types'
+
+import type { User } from '@/types/api'
 
 export interface RouterContext {
 	user: User | null

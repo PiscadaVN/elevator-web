@@ -1,4 +1,5 @@
 import type { HTTPValidationError } from '@/types/api'
+import { keysToCamel, keysToSnake } from './case-converter'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
@@ -40,7 +41,7 @@ interface FetchOptions extends RequestInit {
 }
 
 export async function apiFetch<T>(endpoint: string, options: FetchOptions = {}): Promise<T> {
-	const { requireAuth = true, headers = {}, ...restOptions } = options
+	const { requireAuth = true, headers = {}, body, ...restOptions } = options
 
 	const url = `${API_BASE_URL}${endpoint}`
 
@@ -56,9 +57,27 @@ export async function apiFetch<T>(endpoint: string, options: FetchOptions = {}):
 		}
 	}
 
+	// Convert request body from camelCase to snake_case
+	let processedBody: BodyInit | undefined
+	if (body) {
+		if (requestHeaders['Content-Type'] === 'application/json') {
+			try {
+				const parsedBody = typeof body === 'string' ? JSON.parse(body) : body
+				const snakeCaseBody = keysToSnake(parsedBody)
+				processedBody = JSON.stringify(snakeCaseBody)
+			} catch {
+				// If parsing fails, use original body
+				processedBody = body as BodyInit
+			}
+		} else {
+			processedBody = body as BodyInit
+		}
+	}
+
 	try {
 		const response = await fetch(url, {
 			...restOptions,
+			body: processedBody,
 			headers: requestHeaders,
 		})
 
@@ -72,7 +91,8 @@ export async function apiFetch<T>(endpoint: string, options: FetchOptions = {}):
 			throw new ApiError(data.detail || data.message || 'API request failed', response.status, data)
 		}
 
-		return data as T
+		// Convert response data from snake_case to camelCase
+		return keysToCamel<T>(data)
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw error

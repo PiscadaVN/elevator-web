@@ -1,6 +1,6 @@
+import { Plus } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
 	Dialog,
 	DialogContent,
@@ -10,17 +10,18 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Plus } from 'lucide-react'
 import { useLanguage } from '@/i18n/LanguageContext'
-import type { Elevator, Incident, IncidentPriority } from '@/types'
+import type { Elevator, Incident } from '@/types/api'
 
 interface AddIncidentDialogProps {
 	open: boolean
 	onOpenChange: (open: boolean) => void
 	formData: Partial<Incident>
 	setFormData: (data: Partial<Incident>) => void
-	elevators: Pick<Elevator, 'id' | 'building'>[]
+	elevators: Elevator[]
 	onSubmit: () => void
 	isPending?: boolean
 }
@@ -58,7 +59,7 @@ export function AddIncidentDialog({
 							<SelectContent>
 								{elevators.map((el) => (
 									<SelectItem key={el.id} value={el.id}>
-										{el.id} - {el.building}
+										{el.name} - {el.address}
 									</SelectItem>
 								))}
 							</SelectContent>
@@ -67,31 +68,18 @@ export function AddIncidentDialog({
 					<div className="space-y-2">
 						<Label>{t('description')}</Label>
 						<Input
-							value={formData.description}
+							value={formData.description ?? ''}
 							onChange={(e) => setFormData({ ...formData, description: e.target.value })}
 							placeholder={t('describeProblemPlaceholder')}
 						/>
 					</div>
 					<div className="space-y-2">
 						<Label>{t('priority')}</Label>
-						<Select
-							value={formData.priority}
-							onValueChange={(v) =>
-								setFormData({
-									...formData,
-									priority: v as IncidentPriority,
-								})
-							}
-						>
-							<SelectTrigger>
-								<SelectValue />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="low">{t('low')}</SelectItem>
-								<SelectItem value="medium">{t('medium')}</SelectItem>
-								<SelectItem value="high">{t('high')}</SelectItem>
-							</SelectContent>
-						</Select>
+						<Input
+							value={formData.priority as number}
+							onChange={(e) => setFormData({ ...formData, priority: Number(e.target.value) })}
+							placeholder={t('priorityPlaceholder')}
+						/>
 					</div>
 				</div>
 				<DialogFooter>

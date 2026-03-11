@@ -1,59 +1,46 @@
-import { isAdmin } from '@/lib/role-utils'
-import type { IncidentStatus, UserRole } from '@/types'
-import type { IncidentStatus as ApiIncidentStatus } from '@/types/api'
+import type { IncidentStatus } from '@/types'
 
-export function getNextIncidentStatuses(status: IncidentStatus, role?: UserRole | null): IncidentStatus[] {
+export const IncidentStatusEnum = {
+	NEW: 'NEW',
+	IN_PROGRESS: 'IN_PROGRESS',
+	PENDING_APPROVAL: 'PENDING_APPROVAL',
+	COMPLETED: 'COMPLETED',
+	REJECTED: 'REJECTED',
+} as const
+
+export function getNextIncidentStatuses(status: IncidentStatus): IncidentStatus[] {
 	switch (status) {
-		case 'new':
-			return ['in_progress']
-		case 'in_progress':
-			return ['pending_approval']
-		case 'pending_approval':
-			return isAdmin(role) ? ['completed', 'rejected'] : []
-		case 'completed':
-		case 'rejected':
+		case IncidentStatusEnum.NEW:
+			return [IncidentStatusEnum.IN_PROGRESS]
+		case IncidentStatusEnum.IN_PROGRESS:
+			return [IncidentStatusEnum.PENDING_APPROVAL]
+		case IncidentStatusEnum.PENDING_APPROVAL:
+			return [IncidentStatusEnum.COMPLETED, IncidentStatusEnum.REJECTED]
+		case IncidentStatusEnum.COMPLETED:
+		case IncidentStatusEnum.REJECTED:
 			return []
 	}
 }
 
-export function canTransitionIncidentStatus(
-	currentStatus: IncidentStatus,
-	nextStatus: IncidentStatus,
-	role?: UserRole | null,
-): boolean {
+export function canTransitionIncidentStatus(currentStatus: IncidentStatus, nextStatus: IncidentStatus): boolean {
 	if (currentStatus === nextStatus) {
 		return true
 	}
 
-	return getNextIncidentStatuses(currentStatus, role).includes(nextStatus)
+	return getNextIncidentStatuses(currentStatus).includes(nextStatus)
 }
 
-export function incidentStatusToApiStatus(status: IncidentStatus): ApiIncidentStatus {
+export const getStatusLabel = (status: IncidentStatus, t: (key: string) => string) => {
 	switch (status) {
-		case 'new':
-			return 'NEW'
-		case 'in_progress':
-			return 'IN_PROGRESS'
-		case 'pending_approval':
-			return 'PENDING_APPROVAL'
-		case 'completed':
-			return 'COMPLETED'
-		case 'rejected':
-			return 'REJECTED'
-	}
-}
-
-export function apiIncidentStatusToLocalStatus(status: ApiIncidentStatus): IncidentStatus {
-	switch (status) {
-		case 'NEW':
-			return 'new'
-		case 'IN_PROGRESS':
-			return 'in_progress'
-		case 'PENDING_APPROVAL':
-			return 'pending_approval'
-		case 'COMPLETED':
-			return 'completed'
-		case 'REJECTED':
-			return 'rejected'
+		case IncidentStatusEnum.NEW:
+			return t('new')
+		case IncidentStatusEnum.IN_PROGRESS:
+			return t('inProgress')
+		case IncidentStatusEnum.PENDING_APPROVAL:
+			return t('pendingApproval')
+		case IncidentStatusEnum.COMPLETED:
+			return t('completed')
+		case IncidentStatusEnum.REJECTED:
+			return t('rejected')
 	}
 }

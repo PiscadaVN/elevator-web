@@ -11,9 +11,9 @@ import {
 	DialogTrigger,
 } from '@/components/ui/dialog'
 import { useLanguage } from '@/i18n/LanguageContext'
-import type { Contract, Elevator, User } from '@/types'
 
 import { ContractForm } from './ContractForm'
+import type { Contract, Elevator, User } from '@/types/api'
 
 interface AddContractDialogProps {
 	open: boolean

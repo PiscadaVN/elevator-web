@@ -1,50 +1,23 @@
-import { useAuth } from '@/features/auth/hooks/useAuth'
-import {
-	apiIncidentStatusToLocalStatus,
-	canTransitionIncidentStatus,
-	incidentStatusToApiStatus,
-} from '@/features/incident/helpers/status-transition'
+import { useState } from 'react'
+
+import { canTransitionIncidentStatus, IncidentStatusEnum } from '@/features/incident/helpers/status-transition'
 import { useElevators } from '@/hooks/api/useElevator'
 import { useCreateIncident, useDeleteIncident, useIncidents, useUpdateIncident } from '@/hooks/api/useIncident'
 import { useLanguage } from '@/i18n/LanguageContext'
-import type { Elevator, Incident, IncidentStatus } from '@/types'
-import type { IncidentCreate, IncidentUpdate } from '@/types/api'
-import { useMemo, useState } from 'react'
+import type { Incident, IncidentCreate, IncidentStatus, IncidentUpdate } from '@/types/api'
+
 import { AddIncidentDialog } from './AddIncidentDialog'
 import { EditIncidentDialog } from './EditIncidentDialog'
 import { IncidentTable } from './IncidentTable'
 
 export function IncidentList() {
 	const { t } = useLanguage()
-	const { user } = useAuth()
 
-	const { data: apiIncidents = [], isLoading } = useIncidents()
-	const { data: apiElevators = [] } = useElevators()
+	const { data: incidents = [], isLoading } = useIncidents()
+	const { data: elevators = [] } = useElevators()
 	const createMutation = useCreateIncident()
 	const updateMutation = useUpdateIncident()
 	const deleteMutation = useDeleteIncident()
-
-	const incidents = useMemo<Incident[]>(() => {
-		return apiIncidents.map(
-			(inc): Incident => ({
-				id: inc.id,
-				elevatorId: inc.elevator_id,
-				description: inc.description || inc.title || '',
-				priority: inc.priority === 3 ? 'high' : inc.priority === 2 ? 'medium' : 'low',
-				status: apiIncidentStatusToLocalStatus(inc.status),
-				createdAt: inc.created_at ? new Date(inc.created_at * 1000).toISOString() : new Date().toISOString(),
-				updatedAt: inc.updated_at ? new Date(inc.updated_at * 1000).toISOString() : new Date().toISOString(),
-				reporterId: inc.reported_user || 'unknown',
-			}),
-		)
-	}, [apiIncidents])
-
-	const elevators = useMemo<Pick<Elevator, 'id' | 'building'>[]>(() => {
-		return apiElevators.map((elev) => ({
-			id: elev.id,
-			building: elev.address || elev.name || 'N/A',
-		}))
-	}, [apiElevators])
 
 	const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
 	const [editingIncident, setEditingIncident] = useState<Incident | null>(null)
@@ -52,22 +25,20 @@ export function IncidentList() {
 	const [formData, setFormData] = useState<Partial<Incident>>({
 		elevatorId: '',
 		description: '',
-		priority: 'medium',
-		status: 'new',
+		priority: 1,
+		status: IncidentStatusEnum.NEW,
 	})
 
 	const handleAddIncident = async () => {
 		if (!formData.elevatorId || !formData.description) return
 
 		try {
-			const priorityNum = formData.priority === 'high' ? 3 : formData.priority === 'medium' ? 2 : 1
-
 			const newIncidentData: IncidentCreate = {
 				title: formData.description.substring(0, 50),
-				elevator_id: formData.elevatorId,
+				elevatorId: formData.elevatorId,
 				description: formData.description,
-				priority: priorityNum,
-				status: 'NEW',
+				priority: formData.priority,
+				status: IncidentStatusEnum.NEW,
 			}
 
 			await createMutation.mutateAsync(newIncidentData)
@@ -82,9 +53,7 @@ export function IncidentList() {
 		if (!editingIncident) return
 
 		try {
-			const priorityNum = formData.priority === 'high' ? 3 : formData.priority === 'medium' ? 2 : 1
-
-			if (formData.status && !canTransitionIncidentStatus(editingIncident.status, formData.status, user?.role)) {
+			if (formData.status && !canTransitionIncidentStatus(editingIncident.status, formData.status)) {
 				alert(t('invalidIncidentStatusTransition'))
 				return
 			}
@@ -92,8 +61,8 @@ export function IncidentList() {
 			const updateData: IncidentUpdate = {
 				title: formData.description?.substring(0, 50),
 				description: formData.description,
-				priority: priorityNum,
-				status: formData.status ? incidentStatusToApiStatus(formData.status as IncidentStatus) : undefined,
+				priority: formData.priority,
+				status: formData.status as IncidentStatus,
 			}
 
 			await updateMutation.mutateAsync({ incidentId: editingIncident.id, data: updateData })
@@ -121,14 +90,14 @@ export function IncidentList() {
 				return
 			}
 
-			if (!canTransitionIncidentStatus(incident.status, status, user?.role)) {
+			if (!canTransitionIncidentStatus(incident.status, status)) {
 				alert(t('invalidIncidentStatusTransition'))
 				return
 			}
 
 			await updateMutation.mutateAsync({
 				incidentId: id,
-				data: { status: incidentStatusToApiStatus(status) },
+				data: { status },
 			})
 		} catch (_error) {
 			alert(t('failedToUpdateStatus'))
@@ -139,8 +108,8 @@ export function IncidentList() {
 		setFormData({
 			elevatorId: '',
 			description: '',
-			priority: 'medium',
-			status: 'new',
+			priority: 1,
+			status: IncidentStatusEnum.NEW,
 		})
 	}
 
@@ -175,7 +144,6 @@ export function IncidentList() {
 			<IncidentTable
 				incidents={incidents}
 				isLoading={isLoading}
-				currentUserRole={user?.role}
 				onEdit={openEditDialog}
 				onDelete={handleDeleteIncident}
 				onUpdateStatus={handleUpdateStatus}
@@ -183,7 +151,6 @@ export function IncidentList() {
 
 			<EditIncidentDialog
 				incident={editingIncident}
-				currentUserRole={user?.role}
 				onClose={() => {
 					setEditingIncident(null)
 					resetForm()

@@ -1,21 +1,16 @@
 import { useNavigate } from '@tanstack/react-router'
 import { LogOut, Plus, User as UserIcon } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { useDeleteElevator, useElevators, useUpdateElevator } from '@/hooks/api/useElevator'
-import { useUsers } from '@/hooks/api/useUser'
 import { useLanguage } from '@/i18n/LanguageContext'
-import { isAdmin, isViewer } from '@/lib/role-utils'
-import type { Elevator } from '@/types'
-import type { ElevatorUpdate } from '@/types/api'
+import type { Elevator, ElevatorUpdate } from '@/types/api'
 
-import { mapApiStatusToLocal } from '../helper/utils'
 import { AddElevatorDialog } from './AddElevatorDialog'
 import { EditElevatorDialog } from './EditElevatorDialog'
-import { ElevatorStats } from './ElevatorStats'
 import { ElevatorTable } from './ElevatorTable'
 
 export function ElevatorDashboard() {
@@ -24,48 +19,26 @@ export function ElevatorDashboard() {
 	const { user, logout } = useAuth()
 	const { t } = useLanguage()
 
-	const { data: apiElevators, isLoading: loadingElevators } = useElevators()
-	const { data: operators } = useUsers()
+	const { data: elevators = [], isLoading: loadingElevators } = useElevators()
 	const updateMutation = useUpdateElevator()
 	const deleteMutation = useDeleteElevator()
 
 	const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
 	const [editingElevator, setEditingElevator] = useState<Elevator | null>(null)
-	const [statusFilter, setStatusFilter] = useState<'all' | 'available' | 'maintenance' | 'out_of_order'>('all')
 
-	const elevators = useMemo(() => {
-		return (
-			apiElevators?.map(
-				(e) =>
-					({
-						id: e.id,
-						name: e.name || e.elevator_code,
-						building: e.address || 'N/A',
-						floorRange: `${e.min_floor || 1}-${e.max_floor || 20}`,
-						status: mapApiStatusToLocal(e.status),
-						lastUpdated: new Date().toLocaleTimeString(),
-						maintenanceDate: e.installation_at
-							? new Date(e.installation_at * 1000).toISOString().split('T')[0]
-							: new Date().toISOString().split('T')[0],
-						assignedUserId: null,
-					}) as Elevator,
-			) || []
-		)
-	}, [apiElevators])
-
-	const stats = useMemo(() => {
-		return {
-			total: elevators.length,
-			available: elevators.filter((e) => e.status === 'available').length,
-			maintenance: elevators.filter((e) => e.status === 'maintenance').length,
-			incidents: elevators.filter((e) => e.status === 'out_of_order').length,
-		}
-	}, [elevators])
+	// const stats = useMemo(() => {
+	// 	return {
+	// 		total: elevators.length,
+	// 		available: elevators.filter((e) => e.status === 'available').length,
+	// 		maintenance: elevators.filter((e) => e.status === 'maintenance').length,
+	// 		incidents: elevators.filter((e) => e.status === 'out_of_order').length,
+	// 	}
+	// }, [elevators])
 
 	const handleCompleteMaintenance = async (id: string) => {
 		try {
 			const updateData: ElevatorUpdate = {
-				status: 'ACTIVE',
+				status: 'active',
 			}
 
 			await updateMutation.mutateAsync({ elevatorId: id, data: updateData })
@@ -87,20 +60,6 @@ export function ElevatorDashboard() {
 	const openEditDialog = (elevator: Elevator) => {
 		setEditingElevator(elevator)
 	}
-
-	const filteredElevators = useMemo(() => {
-		let filtered = elevators
-
-		if (!isAdmin(user?.role) && !isViewer(user?.role)) {
-			filtered = filtered.filter((e) => e.assignedUserId === user?.id)
-		}
-
-		if (statusFilter !== 'all') {
-			filtered = filtered.filter((e) => e.status === statusFilter)
-		}
-
-		return filtered
-	}, [elevators, user, statusFilter])
 
 	return (
 		<div className="p-8 space-y-8 max-w-7xl mx-auto">
@@ -132,21 +91,16 @@ export function ElevatorDashboard() {
 				</div>
 			</header>
 
-			<ElevatorStats stats={stats} activeFilter={statusFilter} onFilterChange={setStatusFilter} />
+			{/*<ElevatorStats stats={stats} activeFilter={statusFilter} onFilterChange={setStatusFilter} />*/}
 
 			<div className="flex justify-end mb-4">
-				{isAdmin(user?.role) && (
-					<Button size="sm" onClick={() => setIsAddDialogOpen(true)}>
-						<Plus className="w-4 h-4 mr-2" /> {t('addElevator')}
-					</Button>
-				)}
+				<Button onClick={() => setIsAddDialogOpen(true)}>
+					<Plus className="w-4 h-4 mr-2" /> {t('addElevator')}
+				</Button>
 			</div>
 
 			<ElevatorTable
-				elevators={filteredElevators}
-				operators={operators}
-				userRole={user?.role}
-				userId={user?.id}
+				elevators={elevators}
 				isLoading={loadingElevators}
 				onCompleteMaintenance={handleCompleteMaintenance}
 				onEdit={openEditDialog}

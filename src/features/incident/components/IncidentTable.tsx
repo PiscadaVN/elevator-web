@@ -1,71 +1,82 @@
-import { Badge } from '@/components/ui/badge'
+import { AlertCircle, ArrowBigRightDash, Check, CheckCircle2, Clock, Edit, Trash2, X, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { getNextIncidentStatuses } from '@/features/incident/helpers/status-transition'
+import {
+	getNextIncidentStatuses,
+	getStatusLabel,
+	IncidentStatusEnum,
+} from '@/features/incident/helpers/status-transition'
 import { useLanguage } from '@/i18n/LanguageContext'
-import type { Incident, IncidentPriority, IncidentStatus, UserRole } from '@/types'
-import { AlertCircle, CheckCircle2, Clock, Edit, Trash2, XCircle } from 'lucide-react'
+import type { Incident, IncidentStatus } from '@/types/api'
 
 interface IncidentTableProps {
 	incidents: Incident[]
 	isLoading: boolean
-	currentUserRole?: UserRole | null
 	onEdit: (incident: Incident) => void
 	onDelete: (id: string) => void
 	onUpdateStatus: (id: string, status: IncidentStatus) => void
 }
 
-export function IncidentTable({
-	incidents,
-	isLoading,
-	currentUserRole,
-	onEdit,
-	onDelete,
-	onUpdateStatus,
-}: IncidentTableProps) {
+const getStatusIcon = (status: IncidentStatus) => {
+	switch (status) {
+		case IncidentStatusEnum.NEW:
+			return <AlertCircle className="w-4 h-4 text-blue-500" />
+		case IncidentStatusEnum.IN_PROGRESS:
+			return <Clock className="w-4 h-4 text-yellow-500" />
+		case IncidentStatusEnum.PENDING_APPROVAL:
+			return <Clock className="w-4 h-4 text-orange-500" />
+		case IncidentStatusEnum.COMPLETED:
+			return <CheckCircle2 className="w-4 h-4 text-green-500" />
+		case IncidentStatusEnum.REJECTED:
+			return <XCircle className="w-4 h-4 text-red-500" />
+	}
+}
+
+export function IncidentTable({ incidents, isLoading, onEdit, onDelete, onUpdateStatus }: IncidentTableProps) {
 	const { t } = useLanguage()
 
-	const getPriorityBadge = (priority: IncidentPriority) => {
-		switch (priority) {
-			case 'high':
-				return <Badge variant="destructive">{t('high')}</Badge>
-			case 'medium':
-				return <Badge variant="warning">{t('medium')}</Badge>
-			case 'low':
-				return <Badge variant="outline">{t('low')}</Badge>
-		}
-	}
+	const getNextStatusButton = (incident: Incident) => {
+		const allowedNextStatuses = getNextIncidentStatuses(incident.status)
 
-	const getStatusIcon = (status: IncidentStatus) => {
-		switch (status) {
-			case 'new':
-				return <AlertCircle className="w-4 h-4 text-blue-500" />
-			case 'in_progress':
-				return <Clock className="w-4 h-4 text-yellow-500" />
-			case 'pending_approval':
-				return <Clock className="w-4 h-4 text-orange-500" />
-			case 'completed':
-				return <CheckCircle2 className="w-4 h-4 text-green-500" />
-			case 'rejected':
-				return <XCircle className="w-4 h-4 text-red-500" />
+		if (allowedNextStatuses.length === 0) {
+			return null
 		}
-	}
 
-	const getStatusLabel = (status: IncidentStatus) => {
-		switch (status) {
-			case 'new':
-				return t('new')
-			case 'in_progress':
-				return t('inProgress')
-			case 'pending_approval':
-				return t('pendingApproval')
-			case 'completed':
-				return t('completed')
-			case 'rejected':
-				return t('rejected')
+		if (incident.status === IncidentStatusEnum.PENDING_APPROVAL) {
+			return (
+				<div className="flex items-center gap-1">
+					<Button
+						variant="ghost"
+						size="icon"
+						onClick={() => onUpdateStatus(incident.id, IncidentStatusEnum.COMPLETED)}
+						title={t('completed')}
+					>
+						<Check className="w-4 h-4 text-green-600" />
+					</Button>
+					<Button
+						variant="ghost"
+						size="icon"
+						onClick={() => onUpdateStatus(incident.id, IncidentStatusEnum.REJECTED)}
+						title={t('rejected')}
+					>
+						<X className="w-4 h-4 text-red-600" />
+					</Button>
+				</div>
+			)
 		}
+
+		const nextStatus = allowedNextStatuses[0]
+		return (
+			<Button
+				variant="ghost"
+				size="icon"
+				onClick={() => onUpdateStatus(incident.id, nextStatus)}
+				title={getStatusLabel(nextStatus, t)}
+			>
+				<ArrowBigRightDash className="w-4 h-4 text-green-600" />
+			</Button>
+		)
 	}
 
 	return (
@@ -84,8 +95,8 @@ export function IncidentTable({
 								<TableHead>{t('elevator')}</TableHead>
 								<TableHead>{t('description')}</TableHead>
 								<TableHead>{t('priority')}</TableHead>
-								<TableHead>{t('status')}</TableHead>
 								<TableHead>{t('createdAt')}</TableHead>
+								<TableHead>{t('status')}</TableHead>
 								<TableHead className="text-right">{t('actions')}</TableHead>
 							</TableRow>
 						</TableHeader>
@@ -97,56 +108,35 @@ export function IncidentTable({
 									</TableCell>
 								</TableRow>
 							) : (
-								incidents.map((incident) => {
-									const allowedNextStatuses = getNextIncidentStatuses(incident.status, currentUserRole)
-									const selectableStatuses = [incident.status, ...allowedNextStatuses].filter(
-										(status, index, arr) => arr.indexOf(status) === index,
-									)
+								incidents.map((incident) => (
+									<TableRow key={incident.id}>
+										<TableCell className="font-bold">{incident.elevatorName}</TableCell>
+										<TableCell className="max-w-xs truncate">{incident.description}</TableCell>
+										<TableCell>{incident.priority}</TableCell>
+										<TableCell className="text-xs text-muted-foreground">
+											{incident?.createdAt ? new Date(incident.createdAt).toLocaleString() : '-'}
+										</TableCell>
+										<TableCell>
+											<div className="flex items-center gap-2">
+												{getStatusIcon(incident.status)}
+												<span className="capitalize text-sm">{getStatusLabel(incident.status, t)}</span>
+											</div>
+										</TableCell>
+										<TableCell className="text-right space-x-2">
+											<div className="flex items-center justify-end gap-2">
+												{getNextStatusButton({ ...incident })}
 
-									return (
-										<TableRow key={incident.id}>
-											<TableCell className="font-bold">{incident.elevatorId}</TableCell>
-											<TableCell className="max-w-xs truncate">{incident.description}</TableCell>
-											<TableCell>{getPriorityBadge(incident.priority)}</TableCell>
-											<TableCell>
-												<div className="flex items-center gap-2">
-													{getStatusIcon(incident.status)}
-													<span className="capitalize text-sm">{getStatusLabel(incident.status)}</span>
-												</div>
-											</TableCell>
-											<TableCell className="text-xs text-muted-foreground">
-												{new Date(incident.createdAt).toLocaleString()}
-											</TableCell>
-											<TableCell className="text-right space-x-2">
-												<div className="flex items-center justify-end gap-2">
-													<Select
-														value={incident.status}
-														onValueChange={(v) => onUpdateStatus(incident.id, v as IncidentStatus)}
-													>
-														<SelectTrigger className="w-36" disabled={allowedNextStatuses.length === 0}>
-															<SelectValue />
-														</SelectTrigger>
-														<SelectContent>
-															{selectableStatuses.map((status) => (
-																<SelectItem key={`${incident.id}-${status}`} value={status}>
-																	{getStatusLabel(status)}
-																</SelectItem>
-															))}
-														</SelectContent>
-													</Select>
+												<Button variant="ghost" size="icon" onClick={() => onEdit(incident)}>
+													<Edit className="w-4 h-4 text-blue-600" />
+												</Button>
 
-													<Button variant="ghost" size="icon" onClick={() => onEdit(incident)}>
-														<Edit className="w-4 h-4 text-blue-600" />
-													</Button>
-
-													<Button variant="ghost" size="icon" onClick={() => onDelete(incident.id)}>
-														<Trash2 className="w-4 h-4 text-red-600" />
-													</Button>
-												</div>
-											</TableCell>
-										</TableRow>
-									)
-								})
+												<Button variant="ghost" size="icon" onClick={() => onDelete(incident.id)}>
+													<Trash2 className="w-4 h-4 text-red-600" />
+												</Button>
+											</div>
+										</TableCell>
+									</TableRow>
+								))
 							)}
 						</TableBody>
 					</Table>
