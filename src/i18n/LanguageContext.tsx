@@ -24,6 +24,8 @@ export const translations: Translations = {
 	edit: { vi: 'Sửa', en: 'Edit' },
 	actions: { vi: 'Thao tác', en: 'Actions' },
 	status: { vi: 'Trạng thái', en: 'Status' },
+	cancelled: { vi: 'Đã hủy', en: 'Cancelled' },
+	scheduled: { vi: 'Đã lên lịch', en: 'Scheduled' },
 	incidents: { vi: 'Sự cố', en: 'Incidents' },
 	priority: { vi: 'Độ ưu tiên', en: 'Priority' },
 	description: { vi: 'Mô tả', en: 'Description' },
@@ -129,9 +131,13 @@ export const translations: Translations = {
 	// Maintenance Status
 	maintenanceDate: { vi: 'Ngày bảo trì', en: 'Maintenance Date' },
 	maintenanceStatus: { vi: 'Trạng thái bảo trì', en: 'Maintenance Status' },
+	scheduledStartAt: { vi: 'Bắt đầu dự kiến', en: 'Scheduled Start' },
+	scheduledEndAt: { vi: 'Kết thúc dự kiến', en: 'Scheduled End' },
+	assignedOperator: { vi: 'Nhân viên được phân công', en: 'Assigned Operator' },
 	overdue: { vi: 'Quá hạn', en: 'Overdue' },
 	dueSoon: { vi: 'Sắp đến hạn', en: 'Due Soon' },
 	normal: { vi: 'Bình thường', en: 'Normal' },
+	broken: { vi: 'Hỏng', en: 'Broken' },
 
 	// User Management
 	userManagementTitle: { vi: 'Quản lý Người dùng', en: 'User Management' },
@@ -174,6 +180,7 @@ export const translations: Translations = {
 
 	// Contracts
 	contracts: { vi: 'Hợp đồng', en: 'Contracts' },
+	contract: { vi: 'Hợp đồng', en: 'Contract' },
 	contractManagementTitle: { vi: 'Quản lý Hợp đồng', en: 'Contract Management' },
 	contractManagementDesc: {
 		vi: 'Quản lý hợp đồng bảo trì thang máy, theo dõi trạng thái và thông tin chi tiết.',
@@ -208,12 +215,35 @@ export const translations: Translations = {
 	contractId: { vi: 'Mã HĐ', en: 'Contract ID' },
 	myContracts: { vi: 'Hợp đồng của tôi', en: 'My Contracts' },
 	allContracts: { vi: 'Tất cả hợp đồng', en: 'All Contracts' },
+	selectElevators: { vi: 'Chọn thang máy', en: 'Select Elevators' },
+	searchElevators: { vi: 'Tìm thang máy...', en: 'Search elevators...' },
+	noElevatorsFound: { vi: 'Không có thang máy nào.', en: 'No elevators found.' },
+
+	// Maintenance
+	maintenanceManagementTitle: { vi: 'Quản lý Bảo trì', en: 'Maintenance Management' },
+	maintenanceManagementDesc: {
+		vi: 'Quản lý lịch bảo trì thang máy, phân công và theo dõi trạng thái thực hiện.',
+		en: 'Manage elevator maintenance schedules, assignments, and execution status.',
+	},
+	maintenanceListDesc: {
+		vi: 'Danh sách lịch bảo trì trong hệ thống.',
+		en: 'List of maintenance schedules in the system.',
+	},
+	addMaintenance: { vi: 'Thêm lịch bảo trì', en: 'Add Maintenance' },
+	createMaintenanceDesc: { vi: 'Tạo lịch bảo trì mới.', en: 'Create a new maintenance schedule.' },
+	updateMaintenanceDesc: { vi: 'Cập nhật thông tin lịch bảo trì.', en: 'Update maintenance schedule details.' },
+	noMaintenanceSchedulesFound: { vi: 'Không có lịch bảo trì nào.', en: 'No maintenance schedules found.' },
+	selectContractPlaceholder: { vi: 'Chọn hợp đồng', en: 'Select contract' },
+	selectOperatorPlaceholder: { vi: 'Chọn nhân viên vận hành', en: 'Select operator' },
+	maintenanceNotesPlaceholder: { vi: 'Ghi chú bảo trì', en: 'Maintenance notes' },
+	notAvailable: { vi: 'Không có', en: 'N/A' },
 
 	// Loading & Error Messages
 	loading: { vi: 'Đang tải...', en: 'Loading...' },
 	loadingIncidents: { vi: 'Đang tải sự cố...', en: 'Loading incidents...' },
 	loadingContracts: { vi: 'Đang tải hợp đồng...', en: 'Loading contracts...' },
 	loadingElevators: { vi: 'Đang tải thang máy...', en: 'Loading elevators...' },
+	loadingMaintenanceSchedules: { vi: 'Đang tải lịch bảo trì...', en: 'Loading maintenance schedules...' },
 	creating: { vi: 'Đang tạo...', en: 'Creating...' },
 	saving: { vi: 'Đang lưu...', en: 'Saving...' },
 	deleting: { vi: 'Đang xóa...', en: 'Deleting...' },
@@ -226,6 +256,12 @@ export const translations: Translations = {
 	failedToCreateContract: { vi: 'Tạo hợp đồng không thành công', en: 'Failed to create contract' },
 	failedToUpdateContract: { vi: 'Cập nhật hợp đồng không thành công', en: 'Failed to update contract' },
 	failedToDeleteContract: { vi: 'Xóa hợp đồng không thành công', en: 'Failed to delete contract' },
+	failedToCreateMaintenance: { vi: 'Tạo lịch bảo trì không thành công', en: 'Failed to create maintenance schedule' },
+	failedToUpdateMaintenance: {
+		vi: 'Cập nhật lịch bảo trì không thành công',
+		en: 'Failed to update maintenance schedule',
+	},
+	failedToDeleteMaintenance: { vi: 'Xóa lịch bảo trì không thành công', en: 'Failed to delete maintenance schedule' },
 	failedToCreateIncident: {
 		vi: 'Tạo sự cố không thành công. Vui lòng thử lại.',
 		en: 'Failed to create incident. Please try again.',
@@ -254,7 +290,6 @@ export const translations: Translations = {
 	failedToDeleteElevator: { vi: 'Xóa thang máy không thành công', en: 'Failed to delete elevator' },
 	noIncidentsFound: { vi: 'Không có sự cố nào.', en: 'No incidents found.' },
 	noUsersFound: { vi: 'Không có người dùng nào.', en: 'No users found.' },
-	noElevatorsFound: { vi: 'Không có thang máy nào.', en: 'No elevators found.' },
 	failedToToggleUserStatus: {
 		vi: 'Thay đổi trạng thái người dùng không thành công. Vui lòng thử lại.',
 		en: 'Failed to toggle user status. Please try again.',
@@ -274,6 +309,10 @@ export const translations: Translations = {
 	confirmDeleteIncident: {
 		vi: 'Bạn có chắc chắn muốn xóa sự cố này?',
 		en: 'Are you sure you want to delete this incident?',
+	},
+	confirmDeleteMaintenance: {
+		vi: 'Bạn có chắc chắn muốn xóa lịch bảo trì này?',
+		en: 'Are you sure you want to delete this maintenance schedule?',
 	},
 	createIncidentDesc: { vi: 'Tạo báo cáo sự cố mới.', en: 'Create a new incident report.' },
 	incidentListDesc: {

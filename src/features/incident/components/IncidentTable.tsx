@@ -1,4 +1,5 @@
 import { AlertCircle, ArrowBigRightDash, Check, CheckCircle2, Clock, Edit, Trash2, X, XCircle } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -94,7 +95,7 @@ export function IncidentTable({ incidents, isLoading, onEdit, onDelete, onUpdate
 							<TableRow>
 								<TableHead>{t('elevator')}</TableHead>
 								<TableHead>{t('description')}</TableHead>
-								<TableHead>{t('priority')}</TableHead>
+								<TableHead className="text-center">{t('priority')}</TableHead>
 								<TableHead>{t('createdAt')}</TableHead>
 								<TableHead>{t('status')}</TableHead>
 								<TableHead className="text-right">{t('actions')}</TableHead>
@@ -104,17 +105,17 @@ export function IncidentTable({ incidents, isLoading, onEdit, onDelete, onUpdate
 							{incidents.length === 0 ? (
 								<TableRow>
 									<TableCell colSpan={7} className="text-center py-10 text-muted-foreground">
-										{t('noIncidentsReported')}
+										{t('noIncidentsFound')}
 									</TableCell>
 								</TableRow>
 							) : (
 								incidents.map((incident) => (
 									<TableRow key={incident.id}>
-										<TableCell className="font-bold">{incident.elevatorName}</TableCell>
+										<TableCell className="font-bold">{incident.elevator.code}</TableCell>
 										<TableCell className="max-w-xs truncate">{incident.description}</TableCell>
-										<TableCell>{incident.priority}</TableCell>
+										<TableCell className="text-center">{incident.priority}</TableCell>
 										<TableCell className="text-xs text-muted-foreground">
-											{incident?.createdAt ? new Date(incident.createdAt).toLocaleString() : '-'}
+											{incident?.createdAt ? new Date(incident.createdAt * 1000).toLocaleString() : '-'}
 										</TableCell>
 										<TableCell>
 											<div className="flex items-center gap-2">

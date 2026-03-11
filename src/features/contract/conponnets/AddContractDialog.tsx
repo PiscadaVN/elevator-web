@@ -11,21 +11,17 @@ import {
 	DialogTrigger,
 } from '@/components/ui/dialog'
 import { useLanguage } from '@/i18n/LanguageContext'
+import type { ContractFormData, Elevator, User } from '@/types/api'
 
 import { ContractForm } from './ContractForm'
-import type { Contract, Elevator, User } from '@/types/api'
 
 interface AddContractDialogProps {
 	open: boolean
 	onOpenChange: (open: boolean) => void
-	formData: Partial<Contract>
-	setFormData: (data: Partial<Contract>) => void
-	selectedElevatorId: string
-	setSelectedElevatorId: (id: string) => void
+	formData: ContractFormData
+	setFormData: (data: ContractFormData) => void
 	allUsers: User[]
 	allElevators: Elevator[]
-	isAdmin: boolean
-	getElevatorName: (id: string) => string
 	onSubmit: () => void
 }
 
@@ -34,12 +30,8 @@ export function AddContractDialog({
 	onOpenChange,
 	formData,
 	setFormData,
-	selectedElevatorId,
-	setSelectedElevatorId,
 	allUsers,
 	allElevators,
-	isAdmin,
-	getElevatorName,
 	onSubmit,
 }: AddContractDialogProps) {
 	const { t } = useLanguage()
@@ -56,17 +48,7 @@ export function AddContractDialog({
 					<DialogTitle>{t('addContract')}</DialogTitle>
 					<DialogDescription>{t('contractManagementDesc')}</DialogDescription>
 				</DialogHeader>
-				<ContractForm
-					formData={formData}
-					setFormData={setFormData}
-					selectedElevatorId={selectedElevatorId}
-					setSelectedElevatorId={setSelectedElevatorId}
-					allUsers={allUsers}
-					allElevators={allElevators}
-					isAdmin={isAdmin}
-					isEditing={false}
-					getElevatorName={getElevatorName}
-				/>
+				<ContractForm formData={formData} setFormData={setFormData} allUsers={allUsers} allElevators={allElevators} />
 				<DialogFooter>
 					<Button onClick={onSubmit}>{t('confirm')}</Button>
 				</DialogFooter>

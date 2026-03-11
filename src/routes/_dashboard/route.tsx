@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, redirect, useLocation, useNavigate } from '@tanstack/react-router'
-import { AlertCircle, Languages, LayoutDashboard, Newspaper, Users } from 'lucide-react'
+import { AlertCircle, Languages, LayoutDashboard, Newspaper, Users, Wrench } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/features/auth/hooks/useAuth'
@@ -47,6 +47,14 @@ function RouteComponent() {
 						className="rounded-full"
 					>
 						<AlertCircle className="w-4 h-4 mr-2" /> {t('incidents')}
+					</Button>
+					<Button
+						variant={currentTab === '/maintenance' ? 'default' : 'ghost'}
+						size="sm"
+						onClick={() => handleNavigate('/maintenance')}
+						className="rounded-full"
+					>
+						<Wrench className="w-4 h-4 mr-2" /> {t('maintenance')}
 					</Button>
 					<Button
 						variant={currentTab === '/elevator' ? 'default' : 'ghost'}

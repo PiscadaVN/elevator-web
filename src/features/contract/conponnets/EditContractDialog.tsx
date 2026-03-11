@@ -8,20 +8,17 @@ import {
 	DialogTitle,
 } from '@/components/ui/dialog'
 import { useLanguage } from '@/i18n/LanguageContext'
-import type { Contract, Elevator, User } from '@/types'
+import type { ContractFormData, Elevator, User } from '@/types/api'
+
 import { ContractForm } from './ContractForm'
 
 interface EditContractDialogProps {
-	contract: Contract | null
+	contract: { id: string } | null
 	onClose: () => void
-	formData: Partial<Contract>
-	setFormData: (data: Partial<Contract>) => void
-	selectedElevatorId: string
-	setSelectedElevatorId: (id: string) => void
+	formData: ContractFormData
+	setFormData: (data: ContractFormData) => void
 	allUsers: User[]
 	allElevators: Elevator[]
-	isAdmin: boolean
-	getElevatorName: (id: string) => string
 	onSubmit: () => void
 }
 
@@ -30,12 +27,8 @@ export function EditContractDialog({
 	onClose,
 	formData,
 	setFormData,
-	selectedElevatorId,
-	setSelectedElevatorId,
 	allUsers,
 	allElevators,
-	isAdmin,
-	getElevatorName,
 	onSubmit,
 }: EditContractDialogProps) {
 	const { t } = useLanguage()
@@ -45,21 +38,11 @@ export function EditContractDialog({
 			<DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
 				<DialogHeader>
 					<DialogTitle>
-						{t('edit')}: {contract?.id}
+						{t('edit')} {t('contracts').toLowerCase()}
 					</DialogTitle>
 					<DialogDescription>{t('contractManagementDesc')}</DialogDescription>
 				</DialogHeader>
-				<ContractForm
-					formData={formData}
-					setFormData={setFormData}
-					selectedElevatorId={selectedElevatorId}
-					setSelectedElevatorId={setSelectedElevatorId}
-					allUsers={allUsers}
-					allElevators={allElevators}
-					isAdmin={isAdmin}
-					isEditing={true}
-					getElevatorName={getElevatorName}
-				/>
+				<ContractForm formData={formData} setFormData={setFormData} allUsers={allUsers} allElevators={allElevators} />
 				<DialogFooter>
 					<Button onClick={onSubmit}>{t('save')}</Button>
 				</DialogFooter>

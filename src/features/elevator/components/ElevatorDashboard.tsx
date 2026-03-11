@@ -5,9 +5,9 @@ import { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/features/auth/hooks/useAuth'
-import { useDeleteElevator, useElevators, useUpdateElevator } from '@/hooks/api/useElevator'
+import { useDeleteElevator, useElevators } from '@/hooks/api/useElevator'
 import { useLanguage } from '@/i18n/LanguageContext'
-import type { Elevator, ElevatorUpdate } from '@/types/api'
+import type { Elevator } from '@/types/api'
 
 import { AddElevatorDialog } from './AddElevatorDialog'
 import { EditElevatorDialog } from './EditElevatorDialog'
@@ -20,7 +20,6 @@ export function ElevatorDashboard() {
 	const { t } = useLanguage()
 
 	const { data: elevators = [], isLoading: loadingElevators } = useElevators()
-	const updateMutation = useUpdateElevator()
 	const deleteMutation = useDeleteElevator()
 
 	const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
@@ -34,18 +33,6 @@ export function ElevatorDashboard() {
 	// 		incidents: elevators.filter((e) => e.status === 'out_of_order').length,
 	// 	}
 	// }, [elevators])
-
-	const handleCompleteMaintenance = async (id: string) => {
-		try {
-			const updateData: ElevatorUpdate = {
-				status: 'active',
-			}
-
-			await updateMutation.mutateAsync({ elevatorId: id, data: updateData })
-		} catch (_error) {
-			alert(t('failedToCompleteMaintenance'))
-		}
-	}
 
 	const handleDeleteElevator = async (id: string) => {
 		if (!confirm(t('confirmDeleteElevator'))) return
@@ -102,7 +89,6 @@ export function ElevatorDashboard() {
 			<ElevatorTable
 				elevators={elevators}
 				isLoading={loadingElevators}
-				onCompleteMaintenance={handleCompleteMaintenance}
 				onEdit={openEditDialog}
 				onView={(id) => navigate({ to: `/elevator/${id}` })}
 				onDelete={handleDeleteElevator}

@@ -1,10 +1,11 @@
-import { useMemo } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 
 import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { useContract } from '@/hooks/api'
 import { useLanguage } from '@/i18n/LanguageContext'
-import type { Contract, ContractStatus, Elevator, User } from '@/types'
+import { formatCurrency } from '@/lib/currency-utils'
+import { formatDisplayDate } from '@/lib/date-utils'
 
 interface ViewContractDialogProps {
 	contractId: string
@@ -12,141 +13,79 @@ interface ViewContractDialogProps {
 
 export function ViewContractDialog({ contractId }: ViewContractDialogProps) {
 	const navigate = useNavigate()
-
 	const { t } = useLanguage()
-
-	const contracts = useMemo<Contract[]>(() => {
-		try {
-			const stored = localStorage.getItem('elevator_contracts_db')
-			return stored ? JSON.parse(stored) : []
-		} catch {
-			return []
-		}
-	}, [])
-
-	const allUsers = useMemo<User[]>(() => {
-		try {
-			return JSON.parse(localStorage.getItem('elevator_users_db') || '[]')
-		} catch {
-			return []
-		}
-	}, [])
-
-	const allElevators = useMemo<Elevator[]>(() => {
-		try {
-			const stored = localStorage.getItem('elevator_data')
-			return stored ? JSON.parse(stored) : []
-		} catch {
-			return []
-		}
-	}, [])
-
-	const contract = contracts.find((c) => c.id === contractId)
-
-	const getUserName = (userId: string) => {
-		return allUsers.find((u) => u.id === userId)?.name || userId
-	}
-
-	const getElevatorName = (elevatorId: string) => {
-		return allElevators.find((e) => e.id === elevatorId)?.name || elevatorId
-	}
-
-	const formatCurrency = (amount: number) => {
-		return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount)
-	}
-
-	const formatDate = (dateStr: string) => {
-		if (!dateStr) return ''
-		return new Date(dateStr).toLocaleDateString('vi-VN')
-	}
-
-	const serviceCycleLabel = (cycle: string) => {
-		const map: Record<string, string> = {
-			'1m': `1 ${t('everyMonths')}`,
-			'2m': `2 ${t('everyMonths')}`,
-			'3m': `3 ${t('everyMonths')}`,
-			'6m': `6 ${t('everyMonths')}`,
-			'12m': `12 ${t('everyMonths')}`,
-		}
-		return map[cycle] || cycle
-	}
-
-	const statusBadge = (status: ContractStatus) => {
-		const variants: Record<ContractStatus, 'success' | 'warning' | 'destructive'> = {
-			active: 'success',
-			expired: 'warning',
-			cancelled: 'destructive',
-		}
-		const labels: Record<ContractStatus, string> = {
-			active: t('contractActive'),
-			expired: t('contractExpired'),
-			cancelled: t('contractCancelled'),
-		}
-		return <Badge variant={variants[status]}>{labels[status]}</Badge>
-	}
+	const { data: contract, isLoading } = useContract(contractId)
 
 	return (
-		<Dialog open={!!contractId} onOpenChange={(open) => !open && navigate({ to: '/contract' })}>
-			<DialogContent className="max-w-lg">
+		<Dialog open={true} onOpenChange={(open) => !open && navigate({ to: '/contract' })}>
+			<DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
 				<DialogHeader>
-					<DialogTitle>
-						{t('contracts')}: {contract?.id}
-					</DialogTitle>
+					<DialogTitle>{t('contracts')}</DialogTitle>
 					<DialogDescription>{t('contractManagementDesc')}</DialogDescription>
 				</DialogHeader>
+
+				{isLoading && (
+					<div className="flex items-center justify-center py-8">
+						<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+					</div>
+				)}
+
 				{contract && (
-					<div className="space-y-4 py-4">
-						<div className="grid grid-cols-2 gap-4">
-							<div>
-								<p className="text-sm text-muted-foreground">{t('customer')}</p>
-								<p className="font-semibold">{getUserName(contract.customerId)}</p>
-							</div>
-							<div>
-								<p className="text-sm text-muted-foreground">{t('contractStatus')}</p>
-								{statusBadge(contract.status)}
-							</div>
-						</div>
-						<div className="grid grid-cols-2 gap-4">
-							<div>
-								<p className="text-sm text-muted-foreground">{t('signDate')}</p>
-								<p className="font-semibold">{formatDate(contract.signDate)}</p>
-							</div>
-							<div>
-								<p className="text-sm text-muted-foreground">{t('expiryDate')}</p>
-								<p className="font-semibold">{formatDate(contract.expiryDate)}</p>
-							</div>
-						</div>
-						<div className="grid grid-cols-2 gap-4">
-							<div>
-								<p className="text-sm text-muted-foreground">{t('amount')}</p>
-								<p className="font-semibold text-lg">{formatCurrency(contract.amount)}</p>
-							</div>
-							<div>
-								<p className="text-sm text-muted-foreground">{t('serviceCycle')}</p>
-								<p className="font-semibold">{serviceCycleLabel(contract.serviceCycle)}</p>
-							</div>
-						</div>
+					<div className="space-y-4 py-2">
+						{/* Customer */}
 						<div>
-							<p className="text-sm text-muted-foreground mb-2">{t('linkedElevators')}</p>
-							<div className="flex flex-wrap gap-2">
-								{contract.elevatorIds.map((eid) => (
-									<Badge
-										key={eid}
-										variant="outline"
-										className="cursor-pointer hover:bg-primary/10 transition-colors text-sm px-3 py-1"
-										onClick={() => navigate({ to: `/elevator/${eid}` })}
-									>
-										{getElevatorName(eid)} →
-									</Badge>
-								))}
+							<p className="text-xs text-muted-foreground uppercase font-medium mb-2">{t('customer')}</p>
+							<div className="grid grid-cols-2 gap-3">
+								<div>
+									<p className="text-sm text-muted-foreground">{t('fullName')}</p>
+									<p className="font-semibold">{contract.customer.fullName}</p>
+								</div>
+								<div>
+									<p className="text-sm text-muted-foreground">{t('phone')}</p>
+									<p className="font-semibold">{contract.customer.phone || '-'}</p>
+								</div>
+								<div>
+									<p className="text-sm text-muted-foreground">{t('linkedElevators')}</p>
+									<p className="font-semibold">{contract.elevators[0].code}</p>
+								</div>
+								<div>
+									<p className="text-white">.</p>
+									<p className="font-semibold">{contract.elevators[0]?.address}</p>
+								</div>
 							</div>
 						</div>
-						{contract.note && (
-							<div>
-								<p className="text-sm text-muted-foreground">{t('note')}</p>
-								<p>{contract.note}</p>
+
+						<hr className="border-border" />
+
+						{/* Contract details */}
+						<div>
+							<div className="grid grid-cols-2 gap-3">
+								<div>
+									<p className="text-sm text-muted-foreground">{t('signDate')}</p>
+									<p className="font-semibold">{formatDisplayDate(contract.signedAt)}</p>
+								</div>
+								<div>
+									<p className="text-sm text-muted-foreground">{t('expiryDate')}</p>
+									<p className="font-semibold">{formatDisplayDate(contract.expiredAt)}</p>
+								</div>
+								<div>
+									<p className="text-sm text-muted-foreground">{t('amount')}</p>
+									<p className="font-semibold">{formatCurrency(contract.contractValue)}</p>
+								</div>
+								<div>
+									<p className="text-sm text-muted-foreground">{t('status')}</p>
+									<Badge variant={contract.status === 'active' ? 'default' : 'secondary'}>
+										{contract.status === 'active' ? t('contractActive') : t('contractExpired')}
+									</Badge>
+								</div>
 							</div>
-						)}
+							{contract.description && (
+								<div className="mt-3">
+									<p className="text-sm text-muted-foreground">{t('note')}</p>
+									<p className="font-semibold">{contract.description}</p>
+								</div>
+							)}
+						</div>
 					</div>
 				)}
 			</DialogContent>

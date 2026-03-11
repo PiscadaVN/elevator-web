@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -22,11 +22,11 @@ import type { Elevator, ElevatorStatus, ElevatorUpdate } from '@/types/api'
 
 interface EditElevatorDialogProps {
 	isOpen: boolean
-	onClose: () => void
 	elevator: Elevator
+	onClose: () => void
 }
 
-export function EditElevatorDialog({ isOpen, onClose, elevator }: EditElevatorDialogProps) {
+export function EditElevatorDialog({ isOpen, elevator, onClose }: EditElevatorDialogProps) {
 	const { t } = useLanguage()
 
 	const updateMutation = useUpdateElevator()
@@ -43,24 +43,13 @@ export function EditElevatorDialog({ isOpen, onClose, elevator }: EditElevatorDi
 	)
 
 	const [formData, setFormData] = useState<Partial<Elevator>>({
-		code: '',
-		address: '',
-		minFloor: 0,
-		maxFloor: 0,
-		status: 'active',
-		operatorIds: [],
+		code: elevator.code,
+		address: elevator.address ?? '',
+		minFloor: elevator.minFloor ?? 0,
+		maxFloor: elevator.maxFloor ?? 0,
+		status: elevator.status,
+		operatorIds: elevator.operators?.map((operator) => operator.id) ?? [],
 	})
-
-	useEffect(() => {
-		setFormData({
-			code: elevator.code,
-			address: elevator.address ?? '',
-			minFloor: elevator.minFloor ?? 0,
-			maxFloor: elevator.maxFloor ?? 0,
-			status: elevator.status,
-			operatorIds: elevator.operatorIds ?? [],
-		})
-	}, [elevator])
 
 	const resetForm = useCallback(() => {
 		setFormData({
@@ -68,7 +57,7 @@ export function EditElevatorDialog({ isOpen, onClose, elevator }: EditElevatorDi
 			address: '',
 			minFloor: 0,
 			maxFloor: 0,
-			status: 'active',
+			status: 'normal',
 			operatorIds: [],
 		})
 	}, [])
@@ -134,40 +123,41 @@ export function EditElevatorDialog({ isOpen, onClose, elevator }: EditElevatorDi
 							/>
 						</div>
 					</div>
-					<div className="grid grid-cols-2 gap-4">
-						<div className="space-y-2">
-							<Label>{t('status')}</Label>
-							<Select
-								value={formData.status}
-								onValueChange={(v) =>
-									setFormData({
-										...formData,
-										status: v as ElevatorStatus,
-									})
-								}
-							>
-								<SelectTrigger>
-									<SelectValue />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value="active">{t('normal')}</SelectItem>
-									<SelectItem value="out_of_order">{t('outOfOrder')}</SelectItem>
-								</SelectContent>
-							</Select>
-						</div>
-						<div className="space-y-2">
-							<Label>{t('operators')}</Label>
-							<MultiSelect
-								value={formData.operatorIds ?? []}
-								onValueChange={(operatorIds) => setFormData((prev) => ({ ...prev, operatorIds }))}
-								options={operatorOptions}
-								placeholder={t('selectOperators')}
-								searchPlaceholder={t('searchOperators')}
-								emptyText={t('noUsersFound')}
-							/>
-						</div>
+
+					<div className="space-y-2">
+						<Label>{t('operators')}</Label>
+						<MultiSelect
+							value={formData.operatorIds ?? []}
+							onValueChange={(operatorIds) => setFormData((prev) => ({ ...prev, operatorIds }))}
+							options={operatorOptions}
+							placeholder={t('selectOperators')}
+							searchPlaceholder={t('searchOperators')}
+							emptyText={t('noUsersFound')}
+						/>
+					</div>
+
+					<div className="space-y-2">
+						<Label>{t('status')}</Label>
+						<Select
+							value={formData.status}
+							onValueChange={(v) =>
+								setFormData({
+									...formData,
+									status: v as ElevatorStatus,
+								})
+							}
+						>
+							<SelectTrigger>
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="normal">{t('normal')}</SelectItem>
+								<SelectItem value="broken">{t('broken')}</SelectItem>
+							</SelectContent>
+						</Select>
 					</div>
 				</div>
+
 				<DialogFooter>
 					<Button onClick={handleUpdateElevator} disabled={updateMutation.isPending}>
 						{updateMutation.isPending ? t('saving') : t('save')}

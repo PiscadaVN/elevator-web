@@ -1,11 +1,11 @@
-import type { IncidentStatus } from '@/types'
+import type { IncidentStatus } from '@/types/api'
 
 export const IncidentStatusEnum = {
-	NEW: 'NEW',
-	IN_PROGRESS: 'IN_PROGRESS',
-	PENDING_APPROVAL: 'PENDING_APPROVAL',
-	COMPLETED: 'COMPLETED',
-	REJECTED: 'REJECTED',
+	NEW: 'new',
+	IN_PROGRESS: 'in_progress',
+	PENDING_APPROVAL: 'pending_approval',
+	COMPLETED: 'completed',
+	REJECTED: 'rejected',
 } as const
 
 export function getNextIncidentStatuses(status: IncidentStatus): IncidentStatus[] {

@@ -14,13 +14,13 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useLanguage } from '@/i18n/LanguageContext'
-import type { Elevator, Incident } from '@/types/api'
+import type { Elevator, IncidentFormData } from '@/types/api'
 
 interface AddIncidentDialogProps {
 	open: boolean
 	onOpenChange: (open: boolean) => void
-	formData: Partial<Incident>
-	setFormData: (data: Partial<Incident>) => void
+	formData: IncidentFormData
+	setFormData: (data: IncidentFormData) => void
 	elevators: Elevator[]
 	onSubmit: () => void
 	isPending?: boolean
@@ -52,14 +52,17 @@ export function AddIncidentDialog({
 				<div className="grid gap-4 py-4">
 					<div className="space-y-2">
 						<Label>{t('elevator')}</Label>
-						<Select value={formData.elevatorId} onValueChange={(v) => setFormData({ ...formData, elevatorId: v })}>
+						<Select
+							value={formData.elevatorId}
+							onValueChange={(v) => setFormData({ ...formData, elevatorId: v } as IncidentFormData)}
+						>
 							<SelectTrigger>
 								<SelectValue placeholder={t('selectElevatorPlaceholder')} />
 							</SelectTrigger>
 							<SelectContent>
 								{elevators.map((el) => (
 									<SelectItem key={el.id} value={el.id}>
-										{el.name} - {el.address}
+										{el.code} - {el.address}
 									</SelectItem>
 								))}
 							</SelectContent>
@@ -76,6 +79,7 @@ export function AddIncidentDialog({
 					<div className="space-y-2">
 						<Label>{t('priority')}</Label>
 						<Input
+							type="number"
 							value={formData.priority as number}
 							onChange={(e) => setFormData({ ...formData, priority: Number(e.target.value) })}
 							placeholder={t('priorityPlaceholder')}

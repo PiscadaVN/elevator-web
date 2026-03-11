@@ -45,13 +45,13 @@ export function UserTable({ users, isLoading, onEdit, onToggleStatus }: UserTabl
 										<div className="font-bold">{u.fullName}</div>
 									</TableCell>
 									<TableCell>
-										{u.role === UserRoles.USER ? (
+										{u.role === UserRoles.ADMIN ? (
 											<div className="flex items-center gap-2 text-xs mt-1">
-												<Phone className="w-3 h-3" /> {u.phone || '-'}
+												<Phone className="w-3 h-3" /> {u.email || '-'}
 											</div>
 										) : (
 											<div className="flex items-center gap-2 text-xs">
-												<Mail className="w-3 h-3" /> {u.email || '-'}
+												<Mail className="w-3 h-3" /> {u.phone || '-'}
 											</div>
 										)}
 									</TableCell>

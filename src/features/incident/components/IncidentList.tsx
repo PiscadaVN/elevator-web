@@ -4,7 +4,7 @@ import { canTransitionIncidentStatus, IncidentStatusEnum } from '@/features/inci
 import { useElevators } from '@/hooks/api/useElevator'
 import { useCreateIncident, useDeleteIncident, useIncidents, useUpdateIncident } from '@/hooks/api/useIncident'
 import { useLanguage } from '@/i18n/LanguageContext'
-import type { Incident, IncidentCreate, IncidentStatus, IncidentUpdate } from '@/types/api'
+import type { Incident, IncidentCreate, IncidentFormData, IncidentStatus, IncidentUpdate } from '@/types/api'
 
 import { AddIncidentDialog } from './AddIncidentDialog'
 import { EditIncidentDialog } from './EditIncidentDialog'
@@ -22,7 +22,7 @@ export function IncidentList() {
 	const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
 	const [editingIncident, setEditingIncident] = useState<Incident | null>(null)
 
-	const [formData, setFormData] = useState<Partial<Incident>>({
+	const [formData, setFormData] = useState<IncidentFormData>({
 		elevatorId: '',
 		description: '',
 		priority: 1,
@@ -53,7 +53,7 @@ export function IncidentList() {
 		if (!editingIncident) return
 
 		try {
-			if (formData.status && !canTransitionIncidentStatus(editingIncident.status, formData.status)) {
+			if (formData.status && !canTransitionIncidentStatus(editingIncident.status, formData.status as IncidentStatus)) {
 				alert(t('invalidIncidentStatusTransition'))
 				return
 			}
@@ -90,7 +90,7 @@ export function IncidentList() {
 				return
 			}
 
-			if (!canTransitionIncidentStatus(incident.status, status)) {
+			if (!canTransitionIncidentStatus(incident.status as IncidentStatus, status)) {
 				alert(t('invalidIncidentStatusTransition'))
 				return
 			}
@@ -117,7 +117,7 @@ export function IncidentList() {
 		setEditingIncident(incident)
 		setFormData({
 			elevatorId: incident.elevatorId,
-			description: incident.description,
+			description: incident.description ?? '',
 			priority: incident.priority,
 			status: incident.status,
 		})

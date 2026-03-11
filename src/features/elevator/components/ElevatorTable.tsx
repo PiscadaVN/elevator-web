@@ -1,15 +1,16 @@
-import { CheckCircle2, Edit, Eye, Trash2 } from 'lucide-react'
+import { Edit, Eye, Trash2 } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useLanguage } from '@/i18n/LanguageContext'
+import { formatDisplayDate } from '@/lib/date-utils'
 import type { Elevator } from '@/types/api'
 
 const getStatusBadge = (status: string, t: (key: string) => string) => {
 	switch (status) {
-		case 'out_of_order':
+		case 'broken':
 			return (
 				<Badge variant="destructive" className="ml-2">
 					{t('outOfOrder')}
@@ -27,22 +28,13 @@ const getStatusBadge = (status: string, t: (key: string) => string) => {
 interface ElevatorTableProps {
 	elevators: Elevator[]
 	isLoading: boolean
-	onCompleteMaintenance: (id: string) => void
 	onEdit: (elevator: Elevator) => void
 	onView: (id: string) => void
 	onDelete: (id: string) => void
 	isDeleting: boolean
 }
 
-export function ElevatorTable({
-	elevators,
-	isLoading,
-	onCompleteMaintenance,
-	onEdit,
-	onView,
-	onDelete,
-	isDeleting,
-}: ElevatorTableProps) {
+export function ElevatorTable({ elevators, isLoading, onEdit, onView, onDelete, isDeleting }: ElevatorTableProps) {
 	const { t } = useLanguage()
 
 	return (
@@ -77,20 +69,19 @@ export function ElevatorTable({
 									<TableCell className="text-center">
 										{elevator.minFloor} - {elevator.maxFloor}
 									</TableCell>
-									<TableCell className="text-center">{(elevator.operatorIds ?? []).join(', ') || '-'}</TableCell>
+									<TableCell className="text-center">
+										{elevator.operators?.map((op) => (
+											<Badge key={op.id} variant="outline" className="mx-1">
+												{op.fullName}
+											</Badge>
+										)) || '-'}
+									</TableCell>
 									<TableCell className="text-center">{getStatusBadge(elevator.status, t)}</TableCell>
-									<TableCell className="text-muted-foreground text-right">{elevator.updatedAt}</TableCell>
+									<TableCell className="text-muted-foreground text-right">
+										{formatDisplayDate(elevator.updatedAt)}
+									</TableCell>
 
 									<TableCell className="text-right space-x-2">
-										<Button
-											variant="ghost"
-											size="icon"
-											onClick={() => onCompleteMaintenance(elevator.id)}
-											title={t('updateCompletion')}
-										>
-											<CheckCircle2 className="w-4 h-4 text-green-600" />
-										</Button>
-
 										<Button variant="ghost" size="icon" onClick={() => onEdit(elevator)}>
 											<Edit className="w-4 h-4 text-blue-600" />
 										</Button>

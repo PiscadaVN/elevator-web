@@ -16,13 +16,13 @@ import {
 	IncidentStatusEnum,
 } from '@/features/incident/helpers/status-transition'
 import { useLanguage } from '@/i18n/LanguageContext'
-import type { Incident, IncidentStatus } from '@/types/api'
+import type { Incident, IncidentFormData, IncidentStatus } from '@/types/api'
 
 interface EditIncidentDialogProps {
 	incident: Incident | null
 	onClose: () => void
-	formData: Partial<Incident>
-	setFormData: (data: Partial<Incident>) => void
+	formData: IncidentFormData
+	setFormData: (data: IncidentFormData) => void
 	onSubmit: () => void
 	isPending?: boolean
 }
@@ -47,7 +47,7 @@ export function EditIncidentDialog({
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>
-						{t('edit')}: {incident?.elevatorName}
+						{t('edit')} {t('incidents').toLowerCase()}
 					</DialogTitle>
 					<DialogDescription>{t('updateIncidentDesc')}</DialogDescription>
 				</DialogHeader>
@@ -62,6 +62,7 @@ export function EditIncidentDialog({
 					<div className="space-y-2">
 						<Label>{t('priority')}</Label>
 						<Input
+							type="number"
 							value={formData.priority ?? ''}
 							onChange={(e) => setFormData({ ...formData, priority: Number(e.target.value) })}
 						/>
