@@ -1,4 +1,14 @@
+import { AlertCircle, CircleCheckBig, ClipboardCheck, LoaderCircle, RotateCcw, type LucideIcon } from 'lucide-react'
 import type { IncidentStatus } from '@/types/api'
+
+export interface IncidentStatusStyle {
+	Icon: LucideIcon
+	iconBg: string
+	iconColor: string
+	pillBg: string
+	pillText: string
+	pillBorder: string
+}
 
 export const IncidentStatusEnum = {
 	NEW: 'new',
@@ -7,6 +17,49 @@ export const IncidentStatusEnum = {
 	CLOSE: 'close',
 	REOPEN: 'reopen',
 } as const
+
+export const INCIDENT_STATUS_STYLES: Record<IncidentStatus, IncidentStatusStyle> = {
+	new: {
+		Icon: AlertCircle,
+		iconBg: 'bg-red-50',
+		iconColor: 'text-red-500',
+		pillBg: 'bg-red-50',
+		pillText: 'text-red-700',
+		pillBorder: 'border-red-200',
+	},
+	in_progress: {
+		Icon: LoaderCircle,
+		iconBg: 'bg-orange-50',
+		iconColor: 'text-orange-500',
+		pillBg: 'bg-orange-50',
+		pillText: 'text-orange-700',
+		pillBorder: 'border-orange-200',
+	},
+	in_review: {
+		Icon: ClipboardCheck,
+		iconBg: 'bg-blue-50',
+		iconColor: 'text-blue-500',
+		pillBg: 'bg-blue-50',
+		pillText: 'text-blue-700',
+		pillBorder: 'border-blue-200',
+	},
+	close: {
+		Icon: CircleCheckBig,
+		iconBg: 'bg-emerald-50',
+		iconColor: 'text-emerald-500',
+		pillBg: 'bg-emerald-50',
+		pillText: 'text-emerald-700',
+		pillBorder: 'border-emerald-200',
+	},
+	reopen: {
+		Icon: RotateCcw,
+		iconBg: 'bg-rose-50',
+		iconColor: 'text-rose-600',
+		pillBg: 'bg-rose-50',
+		pillText: 'text-rose-700',
+		pillBorder: 'border-rose-200',
+	},
+}
 
 export function getNextIncidentStatuses(status: IncidentStatus): IncidentStatus[] {
 	switch (status) {

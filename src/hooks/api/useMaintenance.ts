@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 
 import { maintenanceApi } from '@/api/maintenance.api'
+import { translate } from '@/i18n/LanguageContext'
 import type { MaintenanceFormData, MaintenanceSchedule } from '@/types/api'
 
 export const maintenanceKeys = {
@@ -33,6 +35,10 @@ export const useCreateMaintenanceSchedule = () => {
 		mutationFn: maintenanceApi.createMaintenanceSchedule,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: maintenanceKeys.lists() })
+			toast.success(translate('maintenanceCreatedSuccessfully'))
+		},
+		onError: () => {
+			toast.error(translate('failedToCreateMaintenance'))
 		},
 	})
 }
@@ -45,6 +51,10 @@ export const useUpdateMaintenanceSchedule = () => {
 		onSuccess: (_, variables) => {
 			queryClient.invalidateQueries({ queryKey: maintenanceKeys.lists() })
 			queryClient.invalidateQueries({ queryKey: maintenanceKeys.detail(variables.scheduleId) })
+			toast.success(translate('maintenanceUpdatedSuccessfully'))
+		},
+		onError: () => {
+			toast.error(translate('failedToUpdateMaintenance'))
 		},
 	})
 }
@@ -56,6 +66,10 @@ export const useDeleteMaintenanceSchedule = () => {
 		mutationFn: maintenanceApi.deleteMaintenanceSchedule,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: maintenanceKeys.lists() })
+			toast.success(translate('maintenanceDeletedSuccessfully'))
+		},
+		onError: () => {
+			toast.error(translate('failedToDeleteMaintenance'))
 		},
 	})
 }

@@ -1,5 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+
 import { contractApi } from '@/api/contract.api'
+import { translate } from '@/i18n/LanguageContext'
 import type { Contract, ContractCreate, ContractUpdate } from '@/types/api'
 
 export const contractKeys = {
@@ -50,6 +53,10 @@ export const useCreateContract = () => {
 		mutationFn: contractApi.createContract,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: contractKeys.lists() })
+			toast.success(translate('contractCreatedSuccessfully'))
+		},
+		onError: () => {
+			toast.error(translate('failedToCreateContract'))
 		},
 	})
 }
@@ -64,6 +71,10 @@ export const useUpdateContract = () => {
 			queryClient.invalidateQueries({
 				queryKey: contractKeys.detail(variables.contractId),
 			})
+			toast.success(translate('contractUpdatedSuccessfully'))
+		},
+		onError: () => {
+			toast.error(translate('failedToUpdateContract'))
 		},
 	})
 }
@@ -75,6 +86,10 @@ export const useDeleteContract = () => {
 		mutationFn: contractApi.deleteContract,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: contractKeys.lists() })
+			toast.success(translate('contractDeletedSuccessfully'))
+		},
+		onError: () => {
+			toast.error(translate('failedToDeleteContract'))
 		},
 	})
 }

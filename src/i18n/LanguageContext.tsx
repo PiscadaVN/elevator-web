@@ -23,6 +23,11 @@ export const translations: Translations = {
 	delete: { vi: 'Xóa', en: 'Delete' },
 	edit: { vi: 'Sửa', en: 'Edit' },
 	actions: { vi: 'Thao tác', en: 'Actions' },
+	permissions: { vi: 'Phân quyền', en: 'Permissions' },
+	selectRole: { vi: 'Chọn vai trò', en: 'Select role' },
+	searchCustomerPlaceholder: { vi: 'Tìm khách hàng...', en: 'Search customer...' },
+	searchUserPlaceholder: { vi: 'Tìm tên, email...', en: 'Search name, email...' },
+	allRoles: { vi: 'Tất cả vai trò', en: 'All roles' },
 	status: { vi: 'Trạng thái', en: 'Status' },
 	cancelled: { vi: 'Đã hủy', en: 'Cancelled' },
 	maintenanceScheduled: { vi: 'Đã lên lịch', en: 'Scheduled' },
@@ -53,6 +58,10 @@ export const translations: Translations = {
 		en: 'Confirm delete this incident?',
 	},
 	close: { vi: 'Đóng', en: 'Close' },
+	paginationShowing: { vi: 'Hiển thị', en: 'Showing' },
+	paginationOf: { vi: 'trên', en: 'of' },
+	paginationPrevious: { vi: 'Trước', en: 'Previous' },
+	paginationNext: { vi: 'Sau', en: 'Next' },
 
 	// Auth
 	loginTitle: { vi: 'Đăng nhập', en: 'Login' },
@@ -77,7 +86,13 @@ export const translations: Translations = {
 	missingRequiredFields: { vi: 'Vui lòng điền đầy đủ thông tin.', en: 'Please fill in all required fields.' },
 	missingPhone: { vi: 'Vui lòng nhập số điện thoại.', en: 'Please enter a phone number.' },
 	missingEmail: { vi: 'Vui lòng nhập email.', en: 'Please enter an email.' },
-	emailOrPhoneExists: { vi: 'Email hoặc Số điện thoại đã tồn tại.', en: 'Email or Phone number already exists.' },
+	invalidPhoneFormat: { vi: 'Số điện thoại không đúng định dạng.', en: 'Invalid phone number format.' },
+	invalidEmailFormat: { vi: 'Email không đúng định dạng.', en: 'Invalid email format.' },
+	maxFloorMustBeGreaterThanOrEqualMinFloor: {
+		vi: 'Tầng cao nhất không thể nhỏ hơn tầng thấp nhất.',
+		en: 'Max floor cannot be less than min floor.',
+	},
+	emailExists: { vi: 'Email đã tồn tại.', en: 'Email already exists.' },
 
 	// Dashboard Stats
 	totalUnits: { vi: 'Tổng số thiết bị', en: 'Total Units' },
@@ -88,6 +103,10 @@ export const translations: Translations = {
 	requiresAttention: { vi: 'Cần chú ý', en: 'Requires attention' },
 	scheduledChecks: { vi: 'Lịch kiểm tra', en: 'Scheduled checks' },
 	operational: { vi: 'Đang hoạt động', en: 'Operational' },
+	totalElevators: { vi: 'Tổng thang máy', en: 'Total Elevators' },
+	elevatorStatus_available: { vi: 'Hoạt động', en: 'Active' },
+	elevatorStatus_out_of_order: { vi: 'Hỏng', en: 'Out of Order' },
+	elevatorStatus_maintenance: { vi: 'Đang bảo trì', en: 'Maintenance' },
 
 	// Elevator Table
 	elevatorOverview: {
@@ -99,6 +118,12 @@ export const translations: Translations = {
 		en: 'Comprehensive list of units and their operational state.',
 	},
 	addElevator: { vi: 'Thêm thang máy', en: 'Add Elevator' },
+	searchElevatorPlaceholder: { vi: 'Tìm mã thang, tòa nhà...', en: 'Search code, building...' },
+	elevatorDetails: { vi: 'Chi tiết thang máy', en: 'Elevator Details' },
+	elevatorNotFound: { vi: 'Không tìm thấy thang máy.', en: 'Elevator not found.' },
+	basicInfo: { vi: 'Thông tin cơ bản', en: 'Basic Information' },
+	noOperatorAssigned: { vi: 'Chưa phân công', en: 'Not assigned' },
+	view: { vi: 'Xem', en: 'View' },
 	elevatorNamePlaceholder: { vi: 'vd: Thang máy 5', en: 'e.g. Elevator 5' },
 	buildingPlaceholder: { vi: 'vd: Tòa nhà A', en: 'e.g. Tower A' },
 	floorRangePlaceholder: { vi: 'vd: 1-40', en: 'e.g. 1-40' },
@@ -165,6 +190,7 @@ export const translations: Translations = {
 	email: { vi: 'Email', en: 'Email' },
 	phone: { vi: 'Số điện thoại', en: 'Phone' },
 	role: { vi: 'Vai trò', en: 'Role' },
+	allUsers: { vi: 'Tất cả người dùng', en: 'All Users' },
 	superadmin: { vi: 'Quản trị viên cấp cao', en: 'Super Administrator' },
 	admin: { vi: 'Quản trị viên', en: 'Administrator' },
 	operator: { vi: 'Nhân viên vận hành', en: 'Operator' },
@@ -212,6 +238,10 @@ export const translations: Translations = {
 	contractExpired: { vi: 'Hết hạn', en: 'Expired' },
 	contractCancelled: { vi: 'Đã hủy', en: 'Cancelled' },
 	linkedElevators: { vi: 'Thang máy liên kết', en: 'Linked Elevators' },
+	expiryDateMustBeOnOrAfterSignDate: {
+		vi: 'Ngày hết hạn không thể sớm hơn ngày ký.',
+		en: 'Expiry date cannot be earlier than sign date.',
+	},
 	selectCustomer: { vi: 'Chọn khách hàng', en: 'Select Customer' },
 	selectElevator: { vi: 'Chọn thang máy', en: 'Select Elevator' },
 	noContractsFound: { vi: 'Không có hợp đồng nào.', en: 'No contracts found.' },
@@ -245,7 +275,10 @@ export const translations: Translations = {
 	selectContractPlaceholder: { vi: 'Chọn hợp đồng', en: 'Select contract' },
 	selectOperatorPlaceholder: { vi: 'Chọn nhân viên vận hành', en: 'Select operator' },
 	maintenanceNotesPlaceholder: { vi: 'Ghi chú bảo trì', en: 'Maintenance notes' },
+	searchMaintenancePlaceholder: { vi: 'Tìm thang máy, nhân viên...', en: 'Search elevator, staff...' },
+	allStatuses: { vi: 'Tất cả trạng thái', en: 'All statuses' },
 	notAvailable: { vi: 'Không có', en: 'N/A' },
+	deleteMaintenance: { vi: 'Xóa lịch bảo trì', en: 'Delete Maintenance' },
 
 	// Loading & Error Messages
 	loading: { vi: 'Đang tải...', en: 'Loading...' },
@@ -303,6 +336,45 @@ export const translations: Translations = {
 		vi: 'Thay đổi trạng thái người dùng không thành công. Vui lòng thử lại.',
 		en: 'Failed to toggle user status. Please try again.',
 	},
+	failedToCreateAssignment: { vi: 'Tạo phân công không thành công', en: 'Failed to create assignment' },
+	failedToUpdateAssignment: { vi: 'Cập nhật phân công không thành công', en: 'Failed to update assignment' },
+	failedToDeleteAssignment: { vi: 'Xóa phân công không thành công', en: 'Failed to delete assignment' },
+	failedToCreateFile: { vi: 'Tạo tệp không thành công', en: 'Failed to create file' },
+	failedToUpdateFile: { vi: 'Cập nhật tệp không thành công', en: 'Failed to update file' },
+	failedToDeleteFile: { vi: 'Xóa tệp không thành công', en: 'Failed to delete file' },
+	contractCreatedSuccessfully: { vi: 'Tạo hợp đồng thành công', en: 'Contract created successfully' },
+	contractUpdatedSuccessfully: { vi: 'Cập nhật hợp đồng thành công', en: 'Contract updated successfully' },
+	contractDeletedSuccessfully: { vi: 'Xóa hợp đồng thành công', en: 'Contract deleted successfully' },
+	elevatorCreatedSuccessfully: { vi: 'Tạo thang máy thành công', en: 'Elevator created successfully' },
+	elevatorUpdatedSuccessfully: { vi: 'Cập nhật thang máy thành công', en: 'Elevator updated successfully' },
+	elevatorDeletedSuccessfully: { vi: 'Xóa thang máy thành công', en: 'Elevator deleted successfully' },
+	incidentCreatedSuccessfully: { vi: 'Tạo sự cố thành công', en: 'Incident created successfully' },
+	incidentUpdatedSuccessfully: { vi: 'Cập nhật sự cố thành công', en: 'Incident updated successfully' },
+	incidentDeletedSuccessfully: { vi: 'Xóa sự cố thành công', en: 'Incident deleted successfully' },
+	maintenanceCreatedSuccessfully: {
+		vi: 'Tạo lịch bảo trì thành công',
+		en: 'Maintenance schedule created successfully',
+	},
+	maintenanceUpdatedSuccessfully: {
+		vi: 'Cập nhật lịch bảo trì thành công',
+		en: 'Maintenance schedule updated successfully',
+	},
+	maintenanceDeletedSuccessfully: {
+		vi: 'Xóa lịch bảo trì thành công',
+		en: 'Maintenance schedule deleted successfully',
+	},
+	userCreatedSuccessfully: { vi: 'Tạo người dùng thành công', en: 'User created successfully' },
+	userUpdatedSuccessfully: { vi: 'Cập nhật người dùng thành công', en: 'User updated successfully' },
+	userStatusUpdatedSuccessfully: {
+		vi: 'Cập nhật trạng thái người dùng thành công',
+		en: 'User status updated successfully',
+	},
+	assignmentCreatedSuccessfully: { vi: 'Tạo phân công thành công', en: 'Assignment created successfully' },
+	assignmentUpdatedSuccessfully: { vi: 'Cập nhật phân công thành công', en: 'Assignment updated successfully' },
+	assignmentDeletedSuccessfully: { vi: 'Xóa phân công thành công', en: 'Assignment deleted successfully' },
+	fileCreatedSuccessfully: { vi: 'Tạo tệp thành công', en: 'File created successfully' },
+	fileUpdatedSuccessfully: { vi: 'Cập nhật tệp thành công', en: 'File updated successfully' },
+	fileDeletedSuccessfully: { vi: 'Xóa tệp thành công', en: 'File deleted successfully' },
 	loadingUsers: { vi: 'Đang tải người dùng...', en: 'Loading users...' },
 	failedToLoadUsers: { vi: 'Không thể tải danh sách người dùng', en: 'Failed to load users' },
 	failedToCompleteMaintenance: {
@@ -333,16 +405,44 @@ export const translations: Translations = {
 		vi: 'Xem thông tin chi tiết của sự cố đã báo cáo.',
 		en: 'View detailed information of a reported incident.',
 	},
+	incidentDetails: { vi: 'Chi tiết sự cố', en: 'Incident Details' },
+	issueDescription: { vi: 'Mô tả sự cố', en: 'Issue Description' },
+	noAddress: { vi: 'Không có địa chỉ', en: 'No address' },
+	noDescription: { vi: 'Không có mô tả', en: 'No description' },
+	noFiles: { vi: 'Trống', en: 'Empty' },
+	attachedFiles: { vi: 'Tài liệu đính kèm', en: 'Attached Files' },
+	reportedDate: { vi: 'Ngày báo cáo', en: 'Reported Date' },
+	searchIncidentsPlaceholder: { vi: 'Tìm sự cố, thang máy...', en: 'Search incidents, elevators...' },
+	allPriorities: { vi: 'Tất cả ưu tiên', en: 'All priorities' },
+	priorityHigh: { vi: 'Cao', en: 'High' },
+	priorityMedium: { vi: 'Trung bình', en: 'Medium' },
+	priorityLow: { vi: 'Thấp', en: 'Low' },
+	status_new: { vi: 'Mới', en: 'New' },
+	status_handling: { vi: 'Đang xử lý', en: 'In Progress' },
+	status_handled: { vi: 'Đã xử lý', en: 'In Review' },
+	status_done: { vi: 'Hoàn thành', en: 'Completed' },
+	status_reopen: { vi: 'Mở lại', en: 'Reopened' },
 	incidentId: { vi: 'Mã sự cố', en: 'Incident ID' },
 	incidentTitle: { vi: 'Tiêu đề', en: 'Title' },
+	incidentTitlePlaceholder: { vi: 'Nhập tiêu đề sự cố', en: 'Enter incident title' },
 	reportedBy: { vi: 'Người báo cáo', en: 'Reported by' },
+	updatedBy: { vi: 'Người cập nhật', en: 'Updated by' },
 	incidentNotFound: { vi: 'Không tìm thấy sự cố.', en: 'Incident not found.' },
 	describeProblemPlaceholder: { vi: 'Mô tả vấn đề', en: 'Describe the problem' },
+	addAttachment: { vi: 'Thêm tệp đính kèm', en: 'Add attachment' },
+	existingAttachments: { vi: 'Tệp đã đính kèm', en: 'Existing attachments' },
+	newAttachments: { vi: 'Tệp mới', en: 'New attachments' },
+	attachmentsAddedSuccessfully: { vi: 'Đính kèm tệp thành công', en: 'Attachments added successfully' },
 	changeStatus: { vi: 'Thay đổi trạng thái', en: 'Change Status' },
 	chooseNextStatus: { vi: 'Chọn trạng thái tiếp theo', en: 'Choose Next Status' },
 	incidentInReview: { vi: 'Đã xử lý', en: 'In Review' },
 	incidentClosed: { vi: 'Hoàn thành', en: 'Completed' },
 	incidentReopened: { vi: 'Mở lại', en: 'Reopened' },
+	occurrenceTime: { vi: 'Thời gian phát sinh', en: 'Occurrence time' },
+	incidentInfo: { vi: 'Thông tin sự cố', en: 'Incident info' },
+	contractDetails: { vi: 'Chi tiết hợp đồng', en: 'Contract details' },
+	contractInformation: { vi: 'Thông tin hợp đồng', en: 'Contract Information' },
+	contractExpiring: { vi: 'Sắp hết hạn', en: 'Expiring Soon' },
 
 	// Change Password
 	changePassword: { vi: 'Đổi mật khẩu', en: 'Change Password' },
@@ -371,7 +471,7 @@ function getInitialLanguage(): Language {
 	return savedLang ?? 'vi'
 }
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
+export function LanguageProvider({ children }: Readonly<{ children: React.ReactNode }>) {
 	const [language, setLanguage] = useState<Language>(getInitialLanguage)
 
 	const handleSetLanguage = (lang: Language) => {
@@ -397,4 +497,20 @@ export function useLanguage() {
 		throw new Error('useLanguage must be used within a LanguageProvider')
 	}
 	return context
+}
+
+export type TranslationKey = Extract<keyof typeof translations, string>
+
+function getCurrentLanguage(): Language {
+	if (globalThis.window === undefined) {
+		return 'vi'
+	}
+
+	const savedLang = localStorage.getItem('elevator_lang') as Language | null
+	return savedLang ?? 'vi'
+}
+
+export function translate(key: TranslationKey): string {
+	const language = getCurrentLanguage()
+	return translations[key]?.[language] || String(key)
 }

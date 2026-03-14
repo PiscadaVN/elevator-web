@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -19,7 +20,7 @@ interface ChangePasswordDialogProps {
 	onOpenChange: (open: boolean) => void
 }
 
-export function ChangePasswordDialog({ open, onOpenChange }: ChangePasswordDialogProps) {
+export function ChangePasswordDialog({ open, onOpenChange }: Readonly<ChangePasswordDialogProps>) {
 	const { t } = useLanguage()
 	const changePasswordMutation = useChangePassword()
 
@@ -61,11 +62,11 @@ export function ChangePasswordDialog({ open, onOpenChange }: ChangePasswordDialo
 				newPassword: formData.newPassword,
 			})
 
-			alert(t('passwordChangedSuccessfully'))
+			toast.success(t('passwordChangedSuccessfully'))
 			resetForm()
 			onOpenChange(false)
-		} catch (_error) {
-			alert(t('failedToChangePassword'))
+		} catch {
+			toast.error(t('failedToChangePassword'))
 		}
 	}
 

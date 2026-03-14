@@ -1,5 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+
 import { fileApi } from '@/api/file.api'
+import { translate } from '@/i18n/LanguageContext'
 import type { File, FileCreate, FileUpdate } from '@/types/api'
 
 export const fileKeys = {
@@ -41,6 +44,10 @@ export const useCreateFile = () => {
 		mutationFn: fileApi.createFile,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: fileKeys.lists() })
+			toast.success(translate('fileCreatedSuccessfully'))
+		},
+		onError: () => {
+			toast.error(translate('failedToCreateFile'))
 		},
 	})
 }
@@ -55,6 +62,10 @@ export const useUpdateFile = () => {
 			queryClient.invalidateQueries({
 				queryKey: fileKeys.detail(variables.fileId),
 			})
+			toast.success(translate('fileUpdatedSuccessfully'))
+		},
+		onError: () => {
+			toast.error(translate('failedToUpdateFile'))
 		},
 	})
 }
@@ -66,6 +77,10 @@ export const useDeleteFile = () => {
 		mutationFn: fileApi.deleteFile,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: fileKeys.lists() })
+			toast.success(translate('fileDeletedSuccessfully'))
+		},
+		onError: () => {
+			toast.error(translate('failedToDeleteFile'))
 		},
 	})
 }

@@ -2,6 +2,7 @@ import { RouterProvider } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
+import { Toaster } from '@/components/ui/sonner'
 import { useAuthStore } from '@/features/auth/store/auth.store'
 import { LanguageProvider } from '@/i18n/LanguageContext'
 import { QueryProvider } from '@/providers/QueryProvider'
@@ -20,6 +21,7 @@ createRoot(document.getElementById('root')!).render(
 		<QueryProvider>
 			<LanguageProvider>
 				<InnerApp />
+				<Toaster position="top-right" richColors={true} />
 			</LanguageProvider>
 		</QueryProvider>
 	</StrictMode>,

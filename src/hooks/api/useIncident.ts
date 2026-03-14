@@ -1,5 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+
 import { incidentApi } from '@/api/incident.api'
+import { translate } from '@/i18n/LanguageContext'
 import type { Incident, IncidentCreate, IncidentUpdate } from '@/types/api'
 
 export const incidentKeys = {
@@ -50,6 +53,10 @@ export const useCreateIncident = () => {
 		mutationFn: incidentApi.createIncident,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: incidentKeys.lists() })
+			toast.success(translate('incidentCreatedSuccessfully'))
+		},
+		onError: () => {
+			toast.error(translate('failedToCreateIncident'))
 		},
 	})
 }
@@ -64,6 +71,10 @@ export const useUpdateIncident = () => {
 			queryClient.invalidateQueries({
 				queryKey: incidentKeys.detail(variables.incidentId),
 			})
+			toast.success(translate('incidentUpdatedSuccessfully'))
+		},
+		onError: () => {
+			toast.error(translate('failedToUpdateIncident'))
 		},
 	})
 }
@@ -75,6 +86,10 @@ export const useDeleteIncident = () => {
 		mutationFn: incidentApi.deleteIncident,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: incidentKeys.lists() })
+			toast.success(translate('incidentDeletedSuccessfully'))
+		},
+		onError: () => {
+			toast.error(translate('failedToDeleteIncident'))
 		},
 	})
 }

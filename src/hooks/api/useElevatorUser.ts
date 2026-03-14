@@ -1,5 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+
 import { elevatorUserApi } from '@/api/elevator-user.api'
+import { translate } from '@/i18n/LanguageContext'
 import type { ElevatorUser, ElevatorUserCreate, ElevatorUserUpdate } from '@/types/api'
 
 export const elevatorUserKeys = {
@@ -50,6 +53,10 @@ export const useCreateElevatorUser = () => {
 		mutationFn: elevatorUserApi.createElevatorUser,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: elevatorUserKeys.lists() })
+			toast.success(translate('assignmentCreatedSuccessfully'))
+		},
+		onError: () => {
+			toast.error(translate('failedToCreateAssignment'))
 		},
 	})
 }
@@ -64,6 +71,10 @@ export const useUpdateElevatorUser = () => {
 			queryClient.invalidateQueries({
 				queryKey: elevatorUserKeys.detail(variables.elevatorUserId),
 			})
+			toast.success(translate('assignmentUpdatedSuccessfully'))
+		},
+		onError: () => {
+			toast.error(translate('failedToUpdateAssignment'))
 		},
 	})
 }
@@ -75,6 +86,10 @@ export const useDeleteElevatorUser = () => {
 		mutationFn: elevatorUserApi.deleteElevatorUser,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: elevatorUserKeys.lists() })
+			toast.success(translate('assignmentDeletedSuccessfully'))
+		},
+		onError: () => {
+			toast.error(translate('failedToDeleteAssignment'))
 		},
 	})
 }

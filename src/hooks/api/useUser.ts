@@ -1,7 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+
 import { userApi } from '@/api/user.api'
-import type { User, UserCreate, UserUpdate } from '@/types/api'
+import { translate } from '@/i18n/LanguageContext'
 import { getAuthToken } from '@/lib/api-client'
+import type { User, UserCreate, UserUpdate } from '@/types/api'
 
 export const userKeys = {
 	all: ['users'] as const,
@@ -45,6 +48,10 @@ export const useCreateUser = () => {
 		mutationFn: userApi.createUser,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: userKeys.lists() })
+			toast.success(translate('userCreatedSuccessfully'))
+		},
+		onError: () => {
+			toast.error(translate('failedToCreateUser'))
 		},
 	})
 }
@@ -59,6 +66,10 @@ export const useUpdateUser = () => {
 			queryClient.invalidateQueries({
 				queryKey: userKeys.detail(variables.userId),
 			})
+			toast.success(translate('userUpdatedSuccessfully'))
+		},
+		onError: () => {
+			toast.error(translate('failedToUpdateUser'))
 		},
 	})
 }
@@ -70,6 +81,10 @@ export const useDeleteUser = () => {
 		mutationFn: userApi.deleteUser,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: userKeys.lists() })
+			toast.success(translate('userStatusUpdatedSuccessfully'))
+		},
+		onError: () => {
+			toast.error(translate('failedToToggleUserStatus'))
 		},
 	})
 }

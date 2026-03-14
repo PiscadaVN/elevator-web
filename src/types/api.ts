@@ -140,7 +140,7 @@ export interface ContractCreate {
 	customerId: string
 	signedAt?: number | null
 	expiredAt?: number | null
-	contractValue?: number | string | null
+	contractValue?: number
 	description?: string | null
 	isActive?: boolean | null
 }
@@ -151,7 +151,7 @@ export interface ContractUpdate {
 	customerId?: string | null
 	signedAt?: number | null
 	expiredAt?: number | null
-	contractValue?: number | string | null
+	contractValue?: number
 	description?: string | null
 	isActive?: boolean | null
 }
@@ -201,7 +201,7 @@ export interface ContractFormData {
 	elevatorIds: string[]
 	signedAt?: number
 	expiredAt?: number
-	contractValue?: number | string | null
+	contractValue?: number
 	status: ContractStatus
 	priority?: number
 	note?: string
@@ -219,6 +219,7 @@ export interface IncidentCreate {
 	assignedUser?: string | null
 	priority?: number | null
 	status?: IncidentStatus | null
+	fileIds?: string[] | null
 }
 
 export interface IncidentUpdate {
@@ -230,6 +231,15 @@ export interface IncidentUpdate {
 	assignedUser?: string | null
 	priority?: number | null
 	status?: IncidentStatus | null
+}
+
+export interface UserIncident {
+	id: string
+	fullName: string
+	phone: string
+	email: string
+	role: UserRole
+	isActive: boolean
 }
 
 export interface ElevatorIncident {
@@ -256,18 +266,27 @@ export interface Incident {
 	elevatorId: string
 	id: string
 	priority: number
-	reportedUser: string
+	reportedUser: UserIncident | null
 	reportedUserId: number
 	status: IncidentStatus
 	title: string
+	updatedBy?: UserIncident | string | null
 	updatedAt: number
 }
 
+export interface PendingAttachment {
+	fileName: string
+	fileType?: string | null
+	fileUrl: string
+}
+
 export interface IncidentFormData {
+	title: string
 	elevatorId: string
 	description: string
 	priority: number
 	status: IncidentStatus
+	attachments: PendingAttachment[]
 }
 
 export type MaintenanceStatus =
@@ -341,7 +360,7 @@ export interface MaintenanceFormData {
 	notes?: string
 }
 
-export type EntityType = 'CONTRACT' | 'INCIDENT'
+export type EntityType = 'contract' | 'incident'
 
 export interface FileCreate {
 	id?: string | null

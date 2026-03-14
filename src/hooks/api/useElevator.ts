@@ -1,5 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+
 import { elevatorApi } from '@/api/elevator.api'
+import { translate } from '@/i18n/LanguageContext'
 import type { Elevator, ElevatorCreate, ElevatorUpdate } from '@/types/api'
 
 export const elevatorKeys = {
@@ -32,6 +35,10 @@ export const useCreateElevator = () => {
 		mutationFn: elevatorApi.createElevator,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: elevatorKeys.lists() })
+			toast.success(translate('elevatorCreatedSuccessfully'))
+		},
+		onError: () => {
+			toast.error(translate('failedToCreateElevator'))
 		},
 	})
 }
@@ -46,6 +53,10 @@ export const useUpdateElevator = () => {
 			queryClient.invalidateQueries({
 				queryKey: elevatorKeys.detail(variables.elevatorId),
 			})
+			toast.success(translate('elevatorUpdatedSuccessfully'))
+		},
+		onError: () => {
+			toast.error(translate('failedToUpdateElevator'))
 		},
 	})
 }
@@ -57,6 +68,10 @@ export const useDeleteElevator = () => {
 		mutationFn: elevatorApi.deleteElevator,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: elevatorKeys.lists() })
+			toast.success(translate('elevatorDeletedSuccessfully'))
+		},
+		onError: () => {
+			toast.error(translate('failedToDeleteElevator'))
 		},
 	})
 }
